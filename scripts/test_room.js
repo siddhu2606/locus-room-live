@@ -3,11 +3,11 @@ const E = require('../src/engine.js'), C = require('../src/room_core.js'), { tru
 let fail = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++; };
 const near = (a, b, t) => Math.abs(a - b) <= t;
 
-/* 1 step detector: 1.8 Hz walking at 50 Hz sampling, 20 s -> ~36 steps */
-{ const sd = new C.StepDetector(); let n = 0; for (let i = 0; i < 1000; i++) { const t = i * 20; if (sd.push(0.3, 0.2, 9.81 + 3 * Math.sin(2 * Math.PI * 1.8 * i / 50) , t)) n++; }
-  ok(near(n, 36, 3), `step detector counts ${n} steps (expect ~36)`);
-  const sd2 = new C.StepDetector(); let m = 0; for (let i = 0; i < 1000; i++) if (sd2.push(0.02 * Math.sin(i), 0, 9.81, i * 20)) m++;
-  ok(m <= 1, `no false steps while standing still (${m})`); }
+/* 1 step detector across sensor rates, carrying styles and noise (real phones differ a lot) */
+{ const rng = E.rngMake(3); const run = (hz, amp, f, secs, noise, still) => { const sd = new C.StepDetector(); let n = 0; for (let i = 0; i < hz * secs; i++) { const t = i * 1000 / hz; const w = still ? amp * Math.sin(2 * Math.PI * 8 * t / 1000) : amp * Math.sin(2 * Math.PI * f * t / 1000) + 0.35 * amp * Math.sin(2 * Math.PI * 2 * f * t / 1000 + 1); if (sd.push(0.4 + noise * rng.g(), 0.2 + noise * rng.g(), 9.81 + w + noise * rng.g(), t)) n++; } return n; };
+  for (const [hz, amp] of [[20, 2.5], [60, 2.5], [100, 2.5], [60, 1.0], [60, 5], [50, 0.7]]) { const n = run(hz, amp, 1.8, 20, 0.15, false); ok(Math.abs(n - 36) <= 4, `walking ${hz} Hz amp ${amp} m/s2: ${n} steps (expect ~36)`); }
+  const slow = run(60, 2, 1.3, 20, .15, false); ok(Math.abs(slow - 26) <= 4, `slow walk 1.3 Hz: ${slow} steps (expect ~26)`);
+  const m = run(60, 0.25, 0, 20, .1, true); ok(m <= 2, `hand tremor / standing still: ${m} false steps`); }
 /* 2 heading */
 ok(near(C.headingFromEuler(0, 0, 0), 0, 1e-6), 'flat phone alpha 0 -> north');
 ok(near(C.headingFromEuler(90, 0, 0), 270, 1e-6), 'flat phone alpha 90 -> west');

@@ -146,9 +146,10 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
         <button data-s="gps" aria-pressed="false"><b>GPS</b><span>Big rooms / outdoors. Weak indoors.</span></button>
       </div>
       <div id="o-phone" hidden style="display:none;flex-direction:column;gap:12px">
-        <div class="row"><button class="btn pri" id="b-sens">Enable phone sensors</button><button class="btn sm" id="b-align">Face the top wall → Align</button><button class="btn sm" id="b-step">+1 test step</button></div>
+        <div class="row"><button class="btn pri" id="b-sens">Enable phone sensors</button><button class="btn sm" id="b-align">Face the top wall → Align</button><button class="btn sm" id="b-step">+1 step</button><button class="btn sm" id="b-hold" style="touch-action:none">Hold to walk</button></div>
         <div class="note" id="n-sens">Hold the phone flat in front of you (screen up) or upright, then walk. Press <b>Align</b> while facing the <b>top wall</b> of the map so compass heading matches the room.</div>
         <div class="row"><label class="fld">Your height (cm)<input type="number" id="i-hgt" value="170" min="120" max="220"></label><label class="fld">Step length (m)<input type="number" id="i-step" step="0.01" value="0.70" min="0.3" max="1.2"></label><label class="fld">Walk scale ×<input type="number" id="i-scale" step="0.5" value="1" min="0.5" max="20"></label></div>
+        <label class="fld">Step sensitivity <span class="v" id="v-sens">×1.0</span><input type="range" id="i-sens" min="0.4" max="3" step="0.1" value="1"></label>
         <label class="fld">Heading fine-tune <span class="v" id="v-off">0°</span><input type="range" id="i-off" min="-180" max="180" value="0"></label>
         <div class="note" id="n-ph">Steps 0 · heading –</div>
       </div>

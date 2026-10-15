@@ -72,6 +72,7 @@ function stepMove(dx, dy) {
 function updateTruth(dt) {
   const spd = S.space === 'hospital' ? 1.4 : 0.9;
   if (S.src === 'demo') { const p = demoPath(); demoI %= p.length; if (moveToward(p[demoI][0], p[demoI][1], spd, dt)) demoI = (demoI + 1) % p.length; }
+  else if (S.src === 'phone') { if (diag.hold) { const h = S.heading == null ? S.align : S.heading, a = (h - S.align - S.fine) * Math.PI / 180, L = 1.1 * S.scale * dt; stepMove(L * Math.sin(a), -L * Math.cos(a)); } }
   else if (S.src === 'remote') { if (remote.pos) { const k = 0.5; S.pos = [S.pos[0] + k * (remote.pos[0] - S.pos[0]), S.pos[1] + k * (remote.pos[1] - S.pos[1])]; } }
   else if (S.src === 'touch') {
     let vx = (keys.d || keys.ArrowRight ? 1 : 0) - (keys.a || keys.ArrowLeft ? 1 : 0) + joy.x, vy = (keys.s || keys.ArrowDown ? 1 : 0) - (keys.w || keys.ArrowUp ? 1 : 0) + joy.y;
@@ -82,14 +83,17 @@ function updateTruth(dt) {
 }
 
 /* ---------- phone sensors ---------- */
-const sd = new StepDetector(), hf = new HeadingFilter(0.25); let sensOn = false, lastMotion = 0, absSeen = false, gpsW = null, gpsOrigin = null, gpsLast = null;
+const sd = new StepDetector(), hf = new HeadingFilter(0.25); const diag = { motion: 0, ori: 0, t0: 0, rate: 0, n0: 0, lastStep: 0, hold: false }; let sensOn = false, lastMotion = 0, absSeen = false, gpsW = null, gpsOrigin = null, gpsLast = null;
 function stepLenFromHeight() { return Math.round(parseFloat($('i-hgt').value) * 0.415) / 100; }
 function onMotion(ev) {
-  const a = ev.accelerationIncludingGravity; if (!a || a.x == null) return; lastMotion = performance.now();
-  if (sd.push(a.x, a.y, a.z, ev.timeStamp || performance.now()) && S.src === 'phone') phoneStep();
+  const a = (ev.accelerationIncludingGravity && ev.accelerationIncludingGravity.x != null) ? ev.accelerationIncludingGravity : (ev.acceleration && ev.acceleration.x != null ? ev.acceleration : null);
+  if (!a) return; const now = performance.now(); lastMotion = now; diag.motion++; if (!diag.t0) { diag.t0 = now; diag.n0 = 0; }
+  const t = (ev.timeStamp && ev.timeStamp > 1) ? ev.timeStamp : now;
+  if (sd.push(a.x || 0, a.y || 0, a.z || 0, t) && S.src === 'phone') { diag.lastStep = now; phoneStep(); }
 }
 function phoneStep() { S.steps++; const h = S.heading == null ? S.align : S.heading, a = (h - S.align - S.fine) * Math.PI / 180, L = S.stepLen * S.scale; stepMove(L * Math.sin(a), -L * Math.cos(a)); }
 function onOri(ev) {
+  diag.ori++;
   if (ev.type === 'deviceorientation' && absSeen) return; if (ev.type === 'deviceorientationabsolute') absSeen = true;
   let alpha = ev.alpha; if (typeof ev.webkitCompassHeading === 'number') alpha = 360 - ev.webkitCompassHeading;
   if (alpha == null || ev.beta == null) return;
@@ -246,6 +250,8 @@ function bindUI() {
   ['truth', 'locus', 'ls', 'kf', 'pt'].forEach(k => { const cb = $('L-' + k); cb.checked = S.show[k]; cb.parentElement.style.opacity = S.show[k] ? 1 : .4; cb.parentElement.onclick = e => { e.preventDefault(); S.show[k] = !S.show[k]; cb.checked = S.show[k]; cb.parentElement.style.opacity = S.show[k] ? 1 : .4; }; });
   document.querySelectorAll('#srcs button').forEach(b => b.onclick = () => setSource(b.dataset.s));
   $('b-sens').onclick = enableSensors; $('b-align').onclick = () => { if (S.heading == null) { $('n-ph').textContent = 'No heading yet - enable sensors first.'; return; } S.align = S.heading; S.fine = 0; $('i-off').value = 0; $('v-off').textContent = '0°'; };
+  $('i-sens').oninput = e => { sd.sens = +e.target.value; $('v-sens').textContent = '×' + sd.sens.toFixed(1); };
+  const hold = $('b-hold'); hold.onpointerdown = e => { diag.hold = true; hold.setPointerCapture(e.pointerId); if (S.src !== 'phone') setSource('phone'); }; hold.onpointerup = hold.onpointercancel = () => { diag.hold = false; };
   $('b-step').onclick = () => { S.src === 'phone' ? phoneStep() : (setSource('phone'), phoneStep()); };
   $('i-hgt').onchange = () => { S.stepLen = stepLenFromHeight(); $('i-step').value = S.stepLen.toFixed(2); save(); };
   $('i-step').onchange = e => { S.stepLen = +e.target.value; save(); }; $('i-scale').onchange = e => { S.scale = +e.target.value; save(); };
@@ -305,7 +311,11 @@ function updateReport() {
   $('tb').innerHTML = S.anchors.map((a, i) => { const m = c.meas[i], t = c.out ? c.out.trust[i] : 0; return `<tr><td><b>${a.id}</b></td><td>${S.dead.has(a.id) ? 'off' : m ? m.rssi + ' dBm' : 'lost'}</td><td>${m ? m.r3.toFixed(1) + ' m' : '–'}</td><td><div class="tb"><i style="width:${Math.round(t * 100)}%;background:${trustCol(t)}"></i></div></td></tr>`; }).join('');
   const bad = c.out && S.anchors.map((a, i) => ({ a, t: c.out.trust[i], r: c.out.reasons[i] })).filter(x => x.t < 0.7 && x.r).sort((a, b) => a.t - b.t)[0]; $('n-reason').innerHTML = bad ? '<b>' + bad.a.id + ':</b> ' + bad.r : 'All readings look consistent.';
   const nh = c.meas.filter(Boolean).length; $('p-mode').className = 'pill ' + (nh >= 3 ? 'ok' : nh >= 1 ? 'warn' : 'bad'); $('p-mode').lastElementChild.textContent = 'Simulated radio · ' + nh + ' anchors heard';
-  if (S.src === 'phone') $('n-ph').textContent = 'Steps ' + S.steps + ' · heading ' + (S.heading == null ? '–' : S.heading.toFixed(0) + '°') + ' · ' + (performance.now() - lastMotion < 1500 && lastMotion ? 'sensors live' : 'no sensor data');
+  if (S.src === 'phone') {
+    const now = performance.now(), live = lastMotion && now - lastMotion < 1500; if (diag.t0 && now - diag.t0 > 1000) { diag.rate = (diag.motion - diag.n0) / ((now - diag.t0) / 1000); diag.t0 = now; diag.n0 = diag.motion; }
+    let hint = !sensOn ? 'Tap "Enable phone sensors" first.' : !diag.motion ? 'No motion events yet. Use Chrome (Android) or Safari (iPhone) over https, allow Motion sensors for this site, and keep the screen on.' : !live ? 'Motion events stopped - keep the screen on and this tab in front.' : S.steps === 0 ? 'Sensor is live. Now walk with firm steps, phone held steady in front of you (or lower the sensitivity threshold below).' : '';
+    $('n-ph').innerHTML = 'Motion ' + (live ? '<b style="color:#0B8A5E">live</b>' : '<b style="color:#b13a3a">no data</b>') + ' · ' + diag.rate.toFixed(0) + ' Hz · |a| ' + sd.mag.toFixed(1) + ' · threshold ' + sd.thr.toFixed(2) + '<br>Compass ' + (S.heading == null ? '<b style="color:#b13a3a">no heading</b>' : '<b>' + S.heading.toFixed(0) + '°</b>') + ' (' + diag.ori + ' events) · steps <b>' + S.steps + '</b>' + (diag.lastStep ? ' · last ' + ((now - diag.lastStep) / 1000).toFixed(1) + ' s ago' : '') + (hint ? '<br><span style="color:#8a5a00">' + hint + '</span>' : '');
+  }
   const sp = $('spark'), sg = sp.getContext('2d'), W = sp.clientWidth, Hh = sp.clientHeight; if (sp.width !== W * 2) { sp.width = W * 2; sp.height = Hh * 2; } sg.setTransform(2, 0, 0, 2, 0, 0); sg.clearRect(0, 0, W, Hh);
   const mx = Math.max(1, ...stats.loc.slice(-300), ...stats.ls.slice(-300)); [['ls', COL.ls], ['loc', COL.locus]].forEach(([k, col]) => { const a = stats[k].slice(-300); if (a.length < 2) return; sg.beginPath(); a.forEach((v, i) => { const x = i / 299 * W, y = Hh - 6 - v / mx * (Hh - 14); i ? sg.lineTo(x, y) : sg.moveTo(x, y); }); sg.strokeStyle = col; sg.lineWidth = 2; sg.stroke(); });
   sg.fillStyle = '#7A9AA6'; sg.font = '600 10px Figtree'; sg.fillText('error (m) · green LOCUS · amber trilateration · max ' + mx.toFixed(1), 6, 11);

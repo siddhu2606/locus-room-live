@@ -85,18 +85,22 @@ class HeadingFilter {                                    /* circular low-pass */
   push(h) { this.h = this.h == null ? h : (this.h + this.k * angDiff(h, this.h) + 360) % 360; return this.h; }
 }
 
-/* ---- pedestrian dead reckoning: step detection from the accelerometer magnitude ---- */
+/* ---- pedestrian dead reckoning: step detection from the accelerometer ----
+   Works at any sample rate (time-based filters) and any carrying style: gravity is removed with a ~0.8 s low-pass, the dynamic part is smoothed
+   (~45 ms), and a step is a local peak above an ADAPTIVE threshold (0.8 x running RMS, floor 0.35 m/s^2 / sensitivity) at least 280 ms after the last one.
+   ax,ay,az in m/s^2 (with or without gravity), t in ms. Returns true on a step.                                                                 */
 class StepDetector {
-  constructor(minGapMs = 300) { this.g = 9.81; this.s = 0; this.p1 = 0; this.p2 = 0; this.env = 1.5; this.last = -1e9; this.minGap = minGapMs; this.count = 0; }
-  /* returns true when a step is detected. ax,ay,az in m/s^2 (including gravity), t in ms */
+  constructor(minGapMs = 280) { this.g = null; this.s = 0; this.p1 = 0; this.p2 = 0; this.pw = 0.4; this.tp = null; this.last = -1e9; this.minGap = minGapMs; this.count = 0; this.sens = 1; this.mag = 0; this.thr = 0; }
   push(ax, ay, az, t) {
-    const mag = Math.sqrt(ax * ax + ay * ay + az * az);
-    this.g += 0.01 * (mag - this.g);                      /* slow gravity estimate */
-    this.s += 0.35 * ((mag - this.g) - this.s);           /* fast smoothing of the dynamic part */
+    const mag = Math.sqrt(ax * ax + ay * ay + az * az); this.mag = mag;
+    const dt = this.tp == null ? 16 : Math.min(120, Math.max(3, t - this.tp)); this.tp = t;
+    if (this.g == null) this.g = mag;
+    this.g += (1 - Math.exp(-dt / 800)) * (mag - this.g);
+    this.s += (1 - Math.exp(-dt / 45)) * ((mag - this.g) - this.s);
+    this.pw += (1 - Math.exp(-dt / 1500)) * (this.s * this.s - this.pw);
     const cur = this.s, p1 = this.p1, p2 = this.p2; this.p2 = this.p1; this.p1 = cur;
-    this.env = Math.max(this.env * 0.995, Math.abs(cur));
-    const thr = Math.min(2.2, Math.max(0.7, 0.4 * this.env));
-    if (p1 > thr && p1 >= p2 && p1 > cur && t - this.last > this.minGap) { this.last = t; this.count++; return true; }
+    this.thr = Math.max(0.35 / this.sens, 0.8 / this.sens * Math.sqrt(this.pw));
+    if (p1 > this.thr && p1 >= p2 && p1 > cur && t - this.last > this.minGap) { this.last = t; this.count++; return true; }
     return false;
   }
 }
