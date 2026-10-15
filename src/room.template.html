@@ -57,6 +57,8 @@ a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
 .legend label input{display:none}
 @media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
+.pair{position:absolute;right:12px;bottom:70px;background:rgba(255,255,255,.96);border:1.5px solid var(--aqua-l);border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 8px 22px rgba(11,58,74,.12);width:150px;z-index:5}.pair .pt{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px}.pair svg{width:100%;height:auto;display:block}.pair .pc{font:700 22px Sora;letter-spacing:.2em;color:var(--ink)}.pair .pu{font-size:9.5px;color:var(--ink3);word-break:break-all;margin-top:2px}.pair.on{width:auto;padding:7px 12px;background:var(--em-l);border-color:var(--em)}.pair.on #pq,.pair.on .pc,.pair.on .pu{display:none}.pair.on .pt{color:var(--em-dd);margin:0}
+@media(max-width:700px){.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
 .joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
 .joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
@@ -125,6 +127,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <label><i style="background:#8B5CF6"></i><input type="checkbox" id="L-kf" hidden>Kalman</label>
       <label><i style="background:#22C3E6"></i><input type="checkbox" id="L-pt" checked hidden>Particles</label>
     </div>
+    <div class="pair" id="pair" style="display:none"><div class="pt" id="pt">Scan with your phone</div><div id="pq"></div><div class="pc" id="pc"></div><div class="pu" id="pu"></div></div>
     <div class="joy" id="joy"><b id="joyk"></b></div>
     <div class="hud">
       <div class="chip">LOCUS error<b id="h-err">–</b></div>
@@ -160,7 +163,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       </div>
       <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
       <h3>Sync phone ↔ laptop</h3>
-      <div class="note">Walk with the phone, watch the big 3D view on the laptop (or the other way round). Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
+      <div class="note">Phone page: <b>phone.html</b> (scan the QR in the corner of the view). Walk with the phone, watch the big 3D view here. Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
       <div class="row"><button class="btn pri sm" id="b-share">Share this session</button><label class="fld" style="max-width:120px;min-width:100px"><input id="i-code" placeholder="code" inputmode="numeric" maxlength="4"></label><button class="btn sm" id="b-join">Join</button><button class="btn sm" id="b-leave" disabled>Leave</button></div>
       <div id="o-share" style="display:none;flex-direction:column;gap:8px;align-items:flex-start"><div class="note" id="n-share"></div><div id="qr" style="background:#fff;padding:6px;border:1px solid var(--line);border-radius:12px"></div><div class="url" style="width:100%"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div></div>
       <div class="note" id="n-sync">Not connected.</div>

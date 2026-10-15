@@ -57,6 +57,8 @@ a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
 .legend label input{display:none}
 @media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
+.pair{position:absolute;right:12px;bottom:70px;background:rgba(255,255,255,.96);border:1.5px solid var(--aqua-l);border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 8px 22px rgba(11,58,74,.12);width:150px;z-index:5}.pair .pt{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px}.pair svg{width:100%;height:auto;display:block}.pair .pc{font:700 22px Sora;letter-spacing:.2em;color:var(--ink)}.pair .pu{font-size:9.5px;color:var(--ink3);word-break:break-all;margin-top:2px}.pair.on{width:auto;padding:7px 12px;background:var(--em-l);border-color:var(--em)}.pair.on #pq,.pair.on .pc,.pair.on .pu{display:none}.pair.on .pt{color:var(--em-dd);margin:0}
+@media(max-width:700px){.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
 .joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
 .joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
@@ -125,6 +127,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <label><i style="background:#8B5CF6"></i><input type="checkbox" id="L-kf" hidden>Kalman</label>
       <label><i style="background:#22C3E6"></i><input type="checkbox" id="L-pt" checked hidden>Particles</label>
     </div>
+    <div class="pair" id="pair" style="display:none"><div class="pt" id="pt">Scan with your phone</div><div id="pq"></div><div class="pc" id="pc"></div><div class="pu" id="pu"></div></div>
     <div class="joy" id="joy"><b id="joyk"></b></div>
     <div class="hud">
       <div class="chip">LOCUS error<b id="h-err">–</b></div>
@@ -160,7 +163,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       </div>
       <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
       <h3>Sync phone ↔ laptop</h3>
-      <div class="note">Walk with the phone, watch the big 3D view on the laptop (or the other way round). Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
+      <div class="note">Phone page: <b>phone.html</b> (scan the QR in the corner of the view). Walk with the phone, watch the big 3D view here. Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
       <div class="row"><button class="btn pri sm" id="b-share">Share this session</button><label class="fld" style="max-width:120px;min-width:100px"><input id="i-code" placeholder="code" inputmode="numeric" maxlength="4"></label><button class="btn sm" id="b-join">Join</button><button class="btn sm" id="b-leave" disabled>Leave</button></div>
       <div id="o-share" style="display:none;flex-direction:column;gap:8px;align-items:flex-start"><div class="note" id="n-share"></div><div id="qr" style="background:#fff;padding:6px;border:1px solid var(--line);border-radius:12px"></div><div class="url" style="width:100%"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div></div>
       <div class="note" id="n-sync">Not connected.</div>
@@ -798,7 +801,7 @@ function drawPhone() {
   const p = cur.truth, f = P(p[0], p[1], 0), t = P(p[0], p[1], S.zDev);
   g.beginPath(); g.ellipse(f[0], f[1], 9, 9 * Math.max(0.35, Math.sin(S.view.tilt * Math.PI / 180)), 0, 0, 7); g.fillStyle = 'rgba(11,58,74,.18)'; g.fill();
   if (S.view.tilt < 89) line(f, t, COL.truth, 2.5);
-  if (S.heading != null && S.src === 'phone') { const a = (S.heading - S.align - S.fine) * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
+  if (S.heading != null && (S.src === 'phone' || S.src === 'remote')) { const a = (S.src === 'remote' ? S.heading : (S.heading - S.align - S.fine)) * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
   dot(t, 8, COL.truth, '#fff'); g.fillStyle = '#fff'; g.fillRect(t[0] - 2.4, t[1] - 4, 4.8, 8);
   g.fillStyle = COL.truth; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('phone ' + S.zDev.toFixed(1) + ' m', t[0], t[1] - 13);
 }
@@ -886,7 +889,7 @@ function renderAnchorsDz() { document.querySelectorAll('#anchors .an').forEach(e
 function sigUI() { const r = S.model === 'rssi', el = $('i-sig'); el.max = r ? 10 : 3; el.step = r ? 0.5 : 0.1; el.value = r ? S.sigDb : S.sigM; $('v-sig').textContent = el.value + (r ? ' dB' : ' m'); }
 function setSource(s) {
   S.src = s; setSeg('srcs', 's', s); $('o-phone').style.display = s === 'phone' ? 'flex' : 'none'; $('o-gps').style.display = s === 'gps' ? 'flex' : 'none'; $('joy').classList.toggle('on', s === 'touch');
-  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Synced from other device' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
+  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Phone live' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
   if (s === 'phone' && !sensOn) $('n-sens').textContent = 'Tap "Enable phone sensors" (needed once). Then hold the phone flat in front of you and walk.';
 }
 function updateReport() {
@@ -944,21 +947,24 @@ const Sync = (() => {
   function ready() { if (typeof Peer === 'undefined') { say('Sync library could not load (offline?). Check your connection and reload.'); return false; } return true; }
   function wire(c) {
     c.on('open', () => {
-      conns.push(c); $('b-leave').disabled = false; say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
+      conns.push(c); $('b-leave').disabled = false; pairState(true); say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
       if (role === 'host') { c.send({ t: 'cfg', c: cfgSnapshot() }); lastSent = JSON.stringify(cfgSnapshot()); }
     });
     c.on('data', d => {
       if (d.t === 'cfg') { lastRecv = JSON.stringify(d.c); if (lastRecv !== JSON.stringify(cfgSnapshot())) applyCfg(d.c); lastSent = JSON.stringify(cfgSnapshot()); }
+      else if (d.t === 'patch') { const c2 = Object.assign(cfgSnapshot(), d.k || {}); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
       else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
     });
-    c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
+    c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { pairState(false); say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
     c.on('error', e => say('Link error: ' + (e.type || e.message || e)));
   }
+  function pairCard(cd, url) { $('pair').style.display = 'block'; $('pc').textContent = cd; $('pu').textContent = url.replace(/^https?:\/\//, ''); try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('pq').innerHTML = q.createSvgTag({ cellSize: 3, margin: 1 }); } catch (e) { } pairState(false); }
+  function pairState(on) { $('pair').classList.toggle('on', on); $('pt').textContent = on ? 'Phone connected — walk!' : 'Scan with your phone'; }
   function qr(url) { try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 1 }); } catch (e) { $('qr').textContent = ''; } }
   function share() {
     if (!ready()) return; leave(); code = String(1000 + Math.floor(Math.random() * 9000)); role = 'host'; say('Starting…');
     peer = new Peer('locus-rl-' + code);
-    peer.on('open', () => { const url = location.href.split('#')[0] + '#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR or open the link on the other device.'; $('i-url').value = url; qr(url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
+    peer.on('open', () => { const url = location.href.split('#')[0].replace(/[^/]*$/, '') + 'phone.html#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR with your phone (opens the Phone page).'; $('i-url').value = url; qr(url); pairCard(code, url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
     peer.on('connection', wire); peer.on('error', e => { say(e.type === 'unavailable-id' ? 'Code clash, press Share again.' : 'Sync error: ' + e.type); });
   }
   function join(cd) {
@@ -972,8 +978,10 @@ const Sync = (() => {
     $('b-leave').disabled = true; $('o-share').style.display = 'none'; say('Not connected.'); if (S.src === 'remote') setSource('demo');
   }
   /* called every tick (10 Hz) */
+  let estT = 0;
   function pump(now) {
     const oc = open(); if (!oc.length) return;
+    if (now - estT > 200 && cur && cur.out) { estT = now; oc.forEach(c => c.send({ t: 'est', e: cur.out.pos, err: cur.e.loc, n: cur.meas.filter(Boolean).length })); }
     if (S.src !== 'demo' && S.src !== 'remote') oc.forEach(c => c.send({ t: 'pos', p: S.pos, h: S.heading, st: S.steps }));
     if (now - posT > 400) { posT = now; const cur = JSON.stringify(cfgSnapshot()); if (cur !== lastSent && cur !== lastRecv) oc.forEach(c => c.send({ t: 'cfg', c: JSON.parse(cur) })); lastSent = cur; }
   }
@@ -994,6 +1002,7 @@ function init() {
   $('i-zd').value = S.zDev; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; S.zAssume = S.zDev; $('i-model').value = S.model; $('i-loss').value = S.loss * 100; $('v-loss').textContent = Math.round(S.loss * 100) + '%'; $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-step').value = S.stepLen; $('i-scale').value = S.scale;
   sigUI(); bindUI(); resize(); rebuild(false); spaceNote(); renderAnchors(); syncFaults(); syncView(); setSource('demo');
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { });
+  if (!/join=/.test(location.hash)) setTimeout(() => Sync.share(), 700);
   const jm = /join=(\d{4})/.exec(location.hash); if (jm) { document.querySelector('.tabs [data-t=track]').click(); $('i-code').value = jm[1]; setTimeout(() => Sync.join(jm[1]), 400); }
   requestAnimationFrame(loop);
   window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, phoneStep, setSource, rebuild, onMotion, onOri };

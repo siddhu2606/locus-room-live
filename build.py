@@ -15,3 +15,7 @@ print('built')
 t = r('src/room.template.html').replace('/*__ENGINE__*/', eng).replace('/*__TRUST__*/', r('src/trust_model.js')).replace('/*__CORE__*/', r('src/room_core.js')).replace('/*__APP__*/', r('src/room.js'))
 open('room.html', 'w', encoding='utf8').write(t)
 print('built room.html', len(t) // 1024, 'KB')
+
+t = r('src/phone.template.html').replace('/*__ENGINE__*/', eng).replace('/*__CORE__*/', r('src/room_core.js')).replace('/*__APP__*/', r('src/phone.js'))
+open('phone.html', 'w', encoding='utf8').write(t)
+print('built phone.html', len(t) // 1024, 'KB')

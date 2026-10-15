@@ -1,6 +1,6 @@
 # L.O.C.U.S — Room Live
 
-**Live demo:** https://siddhu2606.github.io/locus-room-live/ &nbsp;·&nbsp; **Room Live:** https://siddhu2606.github.io/locus-room-live/room.html
+**Live demo:** https://siddhu2606.github.io/locus-room-live/ &nbsp;·&nbsp; **Live Room (laptop):** [room.html](https://siddhu2606.github.io/locus-room-live/room.html) &nbsp;·&nbsp; **Phone (mobile):** [phone.html](https://siddhu2606.github.io/locus-room-live/phone.html)
 
 Explainable indoor positioning with a handful of cheap BLE anchors. This repo extends the original LOCUS project
 ([vidulaj382-sys/LOCUS](https://github.com/vidulaj382-sys/LOCUS)) with **Room Live**: walk with your phone and watch the system track you in 3D, entirely in the browser (GitHub Pages, no backend).
@@ -16,7 +16,11 @@ Explainable indoor positioning with a handful of cheap BLE anchors. This repo ex
 | **Realistic radio** | RSSI model with dB shadowing, 1 dB quantisation, packet loss, wall/body loss; fault injection (kill / block / drift an anchor). |
 | **Report** | Live CEP50 / CEP95 for LOCUS vs trilateration vs Kalman, per-anchor RSSI/trust/reason, CSV export. |
 
-## Using it on a phone
+## Two pages, in sync
+* **Live Room** (`room.html`, laptop): the big 3D view. It auto-hosts a session and shows a **QR code + 4-digit code** in the corner.
+* **Phone** (`phone.html`, mobile): scan the QR, tap **Enable sensors**, face the top wall, tap **Align**, walk. Your steps + compass move the dot in the Live Room; the Live Room sends back the LOCUS estimate and error, and any room change (size, Hospital map, anchors) updates the phone's map.
+
+## Using it (old single-page mode still works)
 1. Open the live link on your phone (HTTPS is required for sensors). 2. *Track → Phone motion → Enable phone sensors* (iPhone asks permission once).
 3. Face the **top wall** of the map and tap **Align**. 4. Walk. Set *Your height* for step length; use *Walk scale* to cover a bigger space.
 Set the room size in the *Space* tab to match your real room.
@@ -35,6 +39,7 @@ node test.js                    # original engine benchmark
 node scripts/test_room.js       # Room Live maths: steps, heading, 3D, height, ML scorer
 python -m http.server 8765 &    # then:
 node scripts/test_room_browser.js   # headless-Chrome end-to-end (needs Chrome)
-node scripts/test_sync_browser.js   # two browsers: host/join, position + settings sync (needs internet)
+node scripts/test_sync_browser.js   # two Live Room pages: host/join, position + settings sync (needs internet)
+node scripts/test_pair_browser.js   # Live Room + Phone page paired (needs internet)
 ```
 Backend (optional, original LOCUS): see `SETUP.md`.

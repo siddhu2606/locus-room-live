@@ -212,7 +212,7 @@ function drawPhone() {
   const p = cur.truth, f = P(p[0], p[1], 0), t = P(p[0], p[1], S.zDev);
   g.beginPath(); g.ellipse(f[0], f[1], 9, 9 * Math.max(0.35, Math.sin(S.view.tilt * Math.PI / 180)), 0, 0, 7); g.fillStyle = 'rgba(11,58,74,.18)'; g.fill();
   if (S.view.tilt < 89) line(f, t, COL.truth, 2.5);
-  if (S.heading != null && S.src === 'phone') { const a = (S.heading - S.align - S.fine) * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
+  if (S.heading != null && (S.src === 'phone' || S.src === 'remote')) { const a = (S.src === 'remote' ? S.heading : (S.heading - S.align - S.fine)) * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
   dot(t, 8, COL.truth, '#fff'); g.fillStyle = '#fff'; g.fillRect(t[0] - 2.4, t[1] - 4, 4.8, 8);
   g.fillStyle = COL.truth; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('phone ' + S.zDev.toFixed(1) + ' m', t[0], t[1] - 13);
 }
@@ -300,7 +300,7 @@ function renderAnchorsDz() { document.querySelectorAll('#anchors .an').forEach(e
 function sigUI() { const r = S.model === 'rssi', el = $('i-sig'); el.max = r ? 10 : 3; el.step = r ? 0.5 : 0.1; el.value = r ? S.sigDb : S.sigM; $('v-sig').textContent = el.value + (r ? ' dB' : ' m'); }
 function setSource(s) {
   S.src = s; setSeg('srcs', 's', s); $('o-phone').style.display = s === 'phone' ? 'flex' : 'none'; $('o-gps').style.display = s === 'gps' ? 'flex' : 'none'; $('joy').classList.toggle('on', s === 'touch');
-  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Synced from other device' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
+  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Phone live' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
   if (s === 'phone' && !sensOn) $('n-sens').textContent = 'Tap "Enable phone sensors" (needed once). Then hold the phone flat in front of you and walk.';
 }
 function updateReport() {
@@ -358,21 +358,24 @@ const Sync = (() => {
   function ready() { if (typeof Peer === 'undefined') { say('Sync library could not load (offline?). Check your connection and reload.'); return false; } return true; }
   function wire(c) {
     c.on('open', () => {
-      conns.push(c); $('b-leave').disabled = false; say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
+      conns.push(c); $('b-leave').disabled = false; pairState(true); say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
       if (role === 'host') { c.send({ t: 'cfg', c: cfgSnapshot() }); lastSent = JSON.stringify(cfgSnapshot()); }
     });
     c.on('data', d => {
       if (d.t === 'cfg') { lastRecv = JSON.stringify(d.c); if (lastRecv !== JSON.stringify(cfgSnapshot())) applyCfg(d.c); lastSent = JSON.stringify(cfgSnapshot()); }
+      else if (d.t === 'patch') { const c2 = Object.assign(cfgSnapshot(), d.k || {}); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
       else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
     });
-    c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
+    c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { pairState(false); say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
     c.on('error', e => say('Link error: ' + (e.type || e.message || e)));
   }
+  function pairCard(cd, url) { $('pair').style.display = 'block'; $('pc').textContent = cd; $('pu').textContent = url.replace(/^https?:\/\//, ''); try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('pq').innerHTML = q.createSvgTag({ cellSize: 3, margin: 1 }); } catch (e) { } pairState(false); }
+  function pairState(on) { $('pair').classList.toggle('on', on); $('pt').textContent = on ? 'Phone connected — walk!' : 'Scan with your phone'; }
   function qr(url) { try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 1 }); } catch (e) { $('qr').textContent = ''; } }
   function share() {
     if (!ready()) return; leave(); code = String(1000 + Math.floor(Math.random() * 9000)); role = 'host'; say('Starting…');
     peer = new Peer('locus-rl-' + code);
-    peer.on('open', () => { const url = location.href.split('#')[0] + '#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR or open the link on the other device.'; $('i-url').value = url; qr(url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
+    peer.on('open', () => { const url = location.href.split('#')[0].replace(/[^/]*$/, '') + 'phone.html#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR with your phone (opens the Phone page).'; $('i-url').value = url; qr(url); pairCard(code, url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
     peer.on('connection', wire); peer.on('error', e => { say(e.type === 'unavailable-id' ? 'Code clash, press Share again.' : 'Sync error: ' + e.type); });
   }
   function join(cd) {
@@ -386,8 +389,10 @@ const Sync = (() => {
     $('b-leave').disabled = true; $('o-share').style.display = 'none'; say('Not connected.'); if (S.src === 'remote') setSource('demo');
   }
   /* called every tick (10 Hz) */
+  let estT = 0;
   function pump(now) {
     const oc = open(); if (!oc.length) return;
+    if (now - estT > 200 && cur && cur.out) { estT = now; oc.forEach(c => c.send({ t: 'est', e: cur.out.pos, err: cur.e.loc, n: cur.meas.filter(Boolean).length })); }
     if (S.src !== 'demo' && S.src !== 'remote') oc.forEach(c => c.send({ t: 'pos', p: S.pos, h: S.heading, st: S.steps }));
     if (now - posT > 400) { posT = now; const cur = JSON.stringify(cfgSnapshot()); if (cur !== lastSent && cur !== lastRecv) oc.forEach(c => c.send({ t: 'cfg', c: JSON.parse(cur) })); lastSent = cur; }
   }
@@ -408,6 +413,7 @@ function init() {
   $('i-zd').value = S.zDev; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; S.zAssume = S.zDev; $('i-model').value = S.model; $('i-loss').value = S.loss * 100; $('v-loss').textContent = Math.round(S.loss * 100) + '%'; $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-step').value = S.stepLen; $('i-scale').value = S.scale;
   sigUI(); bindUI(); resize(); rebuild(false); spaceNote(); renderAnchors(); syncFaults(); syncView(); setSource('demo');
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { });
+  if (!/join=/.test(location.hash)) setTimeout(() => Sync.share(), 700);
   const jm = /join=(\d{4})/.exec(location.hash); if (jm) { document.querySelector('.tabs [data-t=track]').click(); $('i-code').value = jm[1]; setTimeout(() => Sync.join(jm[1]), 400); }
   requestAnimationFrame(loop);
   window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, phoneStep, setSource, rebuild, onMotion, onOri };

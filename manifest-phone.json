@@ -1,0 +1,37 @@
+{
+  "lang": "en",
+  "display": "standalone",
+  "background_color": "#F4FCFE",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "locus-phone",
+  "name": "LOCUS Phone",
+  "short_name": "LOCUS Phone",
+  "description": "Phone sensor page: your steps and compass drive the LOCUS Live Room.",
+  "start_url": "phone.html",
+  "theme_color": "#10B981",
+  "orientation": "any",
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}
