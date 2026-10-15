@@ -158,9 +158,12 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
         <div class="note" id="n-gps">GPS off.</div>
       </div>
       <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
-      <h3>Open this on your phone</h3>
-      <div class="url"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div>
-      <div class="note">Phone sensors need HTTPS (this GitHub Pages link is). Android Chrome and iPhone Safari both work; iPhone asks permission once.</div>
+      <h3>Sync phone ↔ laptop</h3>
+      <div class="note">Walk with the phone, watch the big 3D view on the laptop (or the other way round). Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
+      <div class="row"><button class="btn pri sm" id="b-share">Share this session</button><label class="fld" style="max-width:120px;min-width:100px"><input id="i-code" placeholder="code" inputmode="numeric" maxlength="4"></label><button class="btn sm" id="b-join">Join</button><button class="btn sm" id="b-leave" disabled>Leave</button></div>
+      <div id="o-share" style="display:none;flex-direction:column;gap:8px;align-items:flex-start"><div class="note" id="n-share"></div><div id="qr" style="background:#fff;padding:6px;border:1px solid var(--line);border-radius:12px"></div><div class="url" style="width:100%"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div></div>
+      <div class="note" id="n-sync">Not connected.</div>
+      <div class="note">Phone sensors need HTTPS (this GitHub Pages link is). Same Wi-Fi is the most reliable; across different networks the link may fail (no relay server).</div>
     </div>
 
     <div class="pane" id="t-space">
@@ -208,6 +211,8 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
     </div>
   </aside>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 /*__ENGINE__*/
 /*__TRUST__*/

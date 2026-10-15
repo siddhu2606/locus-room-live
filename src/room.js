@@ -72,6 +72,7 @@ function stepMove(dx, dy) {
 function updateTruth(dt) {
   const spd = S.space === 'hospital' ? 1.4 : 0.9;
   if (S.src === 'demo') { const p = demoPath(); demoI %= p.length; if (moveToward(p[demoI][0], p[demoI][1], spd, dt)) demoI = (demoI + 1) % p.length; }
+  else if (S.src === 'remote') { if (remote.pos) { const k = 0.5; S.pos = [S.pos[0] + k * (remote.pos[0] - S.pos[0]), S.pos[1] + k * (remote.pos[1] - S.pos[1])]; } }
   else if (S.src === 'touch') {
     let vx = (keys.d || keys.ArrowRight ? 1 : 0) - (keys.a || keys.ArrowLeft ? 1 : 0) + joy.x, vy = (keys.s || keys.ArrowDown ? 1 : 0) - (keys.w || keys.ArrowUp ? 1 : 0) + joy.y;
     const L = Math.hypot(vx, vy);
@@ -251,7 +252,8 @@ function bindUI() {
   $('i-off').oninput = e => { S.fine = +e.target.value; $('v-off').textContent = S.fine + '°'; };
   $('b-gps').onclick = startGps; $('b-gps0').onclick = () => { gpsOrigin = gpsLast ? [gpsLast.latitude, gpsLast.longitude] : null; S.pos = [S.W / 2, S.H / 2]; };
   $('b-reset').onclick = () => { S.trail = []; S.estTrail = []; }; $('b-trail').onclick = e => { S.showTrail = !S.showTrail; e.target.textContent = 'Trail: ' + (S.showTrail ? 'on' : 'off'); if (!S.showTrail) S.trail = []; };
-  $('i-url').value = location.href.split('#')[0]; $('b-copy').onclick = () => { $('i-url').select(); try { navigator.clipboard.writeText($('i-url').value); } catch (e) { document.execCommand('copy'); } };
+  $('b-copy').onclick = () => { $('i-url').select(); try { navigator.clipboard.writeText($('i-url').value); } catch (e) { document.execCommand('copy'); } };
+  $('b-share').onclick = () => Sync.share(); $('b-join').onclick = () => Sync.join($('i-code').value.trim()); $('b-leave').onclick = () => Sync.leave();
   document.querySelectorAll('#spaces button').forEach(b => b.onclick = () => { S.space = b.dataset.sp; setSeg('spaces', 'sp', S.space); if (S.space === 'hospital') { $('i-scale').value = S.scale = 8; S.model = 'add'; $('i-model').value = 'add'; S.sigM = 0.8; sigUI(); S.pos = [3, 12]; } else { $('i-scale').value = S.scale = 1; S.model = 'rssi'; $('i-model').value = 'rssi'; sigUI(); S.pos = [S.W / 2, S.H / 2]; S.Z = +$('i-Z').value; S.W = +$('i-W').value; S.H = +$('i-H').value; } S.dead.clear(); S.obstruct.clear(); S.drift.clear(); demoI = 0; rebuild(false); spaceNote(); renderAnchors(); });
   const sl = (id, k, fmt, after) => { $('i-' + id).oninput = e => { S[k] = +e.target.value; $('v-' + id).textContent = fmt(S[k]); after && after(); save(); }; };
   sl('W', 'W', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('H', 'H', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('Z', 'Z', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); });
@@ -292,7 +294,7 @@ function renderAnchorsDz() { document.querySelectorAll('#anchors .an').forEach(e
 function sigUI() { const r = S.model === 'rssi', el = $('i-sig'); el.max = r ? 10 : 3; el.step = r ? 0.5 : 0.1; el.value = r ? S.sigDb : S.sigM; $('v-sig').textContent = el.value + (r ? ' dB' : ' m'); }
 function setSource(s) {
   S.src = s; setSeg('srcs', 's', s); $('o-phone').style.display = s === 'phone' ? 'flex' : 'none'; $('o-gps').style.display = s === 'gps' ? 'flex' : 'none'; $('joy').classList.toggle('on', s === 'touch');
-  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
+  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Synced from other device' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
   if (s === 'phone' && !sensOn) $('n-sens').textContent = 'Tap "Enable phone sensors" (needed once). Then hold the phone flat in front of you and walk.';
 }
 function updateReport() {
@@ -309,12 +311,85 @@ function updateReport() {
   sg.fillStyle = '#7A9AA6'; sg.font = '600 10px Figtree'; sg.fillText('error (m) · green LOCUS · amber trilateration · max ' + mx.toFixed(1), 6, 11);
 }
 
+/* ---------- phone <-> laptop sync (WebRTC data channel via PeerJS; no server stores anything) ----------
+   Position packets: sent by whichever device has an ACTIVE source (phone/gps/tap); a device on Demo auto-follows them.
+   Settings: a full snapshot is exchanged whenever it changes (last writer wins) so faults, anchors, room size etc. match.
+   Each device keeps its own camera angle.                                                                              */
+const remote = { pos: null, h: null, t: 0 };
+function cfgSnapshot() {
+  return {
+    space: S.space, W: S.W, H: S.H, Z: S.Z, n: S.n, zDev: S.zDev, zKnow: S.zKnow, zAssume: S.zAssume, partition: S.partition, model: S.model, sigDb: S.sigDb, sigM: S.sigM, loss: S.loss, rssi1m: S.rssi1m, pn: S.pn, scorer: S.scorer, scale: S.scale,
+    dead: [...S.dead].sort(), obstruct: [...S.obstruct].sort(), drift: [...S.drift].sort(), anchors: (S.all || []).map(a => [a.id, +a.x.toFixed(2), +a.y.toFixed(2), +a.z.toFixed(2)])
+  };
+}
+function applyCfg(c) {
+  const old = cfgSnapshot(), structural = ['space', 'W', 'H', 'Z', 'partition'].some(k => old[k] !== c[k]) || JSON.stringify(old.anchors) !== JSON.stringify(c.anchors) || old.n !== c.n;
+  ['space', 'W', 'H', 'Z', 'n', 'zDev', 'zKnow', 'zAssume', 'partition', 'model', 'sigDb', 'sigM', 'loss', 'rssi1m', 'pn', 'scale'].forEach(k => S[k] = c[k]);
+  S.dead = new Set(c.dead); S.obstruct = new Set(c.obstruct); S.drift = new Set(c.drift);
+  const scorerChanged = S.scorer !== c.scorer; S.scorer = c.scorer;
+  if (structural) {
+    if (S.space === 'room') S.all = c.anchors.map(a => ({ id: a[0], x: a[1], y: a[2], z: a[3] }));
+    rebuild(S.space === 'room');
+    if (S.space === 'hospital') c.anchors.forEach((a, i) => { if (S.all[i]) S.all[i].z = a[3]; });
+  } else if (scorerChanged) newEngine();
+  syncUIFromState();
+}
+function syncUIFromState() {
+  const set = (id, v, lab, f) => { const e = $(id); if (e) e.value = v; if (lab && $(lab)) $(lab).textContent = f ? f(v) : v; };
+  set('i-W', S.W, 'v-W', v => (+v).toFixed(1)); set('i-H', S.H, 'v-H', v => (+v).toFixed(1)); set('i-Z', S.Z, 'v-Z', v => (+v).toFixed(1)); set('i-n', S.n, 'v-n'); set('i-zd', S.zDev, 'v-zd', v => (+v).toFixed(2) + ' m'); set('i-za', S.zAssume, 'v-za', v => (+v).toFixed(2) + ' m');
+  set('i-loss', Math.round(S.loss * 100), 'v-loss', v => v + '%'); $('i-model').value = S.model; sigUI(); $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-scale').value = S.scale;
+  $('g-part').setAttribute('aria-pressed', S.partition); $('g-zknow').setAttribute('aria-pressed', S.zKnow); $('f-zas').style.display = S.zKnow ? 'none' : 'flex';
+  setSeg('spaces', 'sp', S.space); setSeg('scorer', 'sc', S.scorer); spaceNote(); renderAnchors(); syncFaults();
+}
+const Sync = (() => {
+  let peer = null, conns = [], role = null, code = null, lastSent = '', lastRecv = '', posT = 0;
+  const say = m => { $('n-sync').textContent = m; };
+  const open = () => conns.filter(c => c.open);
+  function ready() { if (typeof Peer === 'undefined') { say('Sync library could not load (offline?). Check your connection and reload.'); return false; } return true; }
+  function wire(c) {
+    c.on('open', () => {
+      conns.push(c); $('b-leave').disabled = false; say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
+      if (role === 'host') { c.send({ t: 'cfg', c: cfgSnapshot() }); lastSent = JSON.stringify(cfgSnapshot()); }
+    });
+    c.on('data', d => {
+      if (d.t === 'cfg') { lastRecv = JSON.stringify(d.c); if (lastRecv !== JSON.stringify(cfgSnapshot())) applyCfg(d.c); lastSent = JSON.stringify(cfgSnapshot()); }
+      else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
+    });
+    c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
+    c.on('error', e => say('Link error: ' + (e.type || e.message || e)));
+  }
+  function qr(url) { try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 1 }); } catch (e) { $('qr').textContent = ''; } }
+  function share() {
+    if (!ready()) return; leave(); code = String(1000 + Math.floor(Math.random() * 9000)); role = 'host'; say('Starting…');
+    peer = new Peer('locus-rl-' + code);
+    peer.on('open', () => { const url = location.href.split('#')[0] + '#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR or open the link on the other device.'; $('i-url').value = url; qr(url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
+    peer.on('connection', wire); peer.on('error', e => { say(e.type === 'unavailable-id' ? 'Code clash, press Share again.' : 'Sync error: ' + e.type); });
+  }
+  function join(cd) {
+    if (!ready()) return; if (!/^\d{4}$/.test(cd)) { say('Enter the 4-digit code shown on the other device.'); return; }
+    leave(); role = 'join'; code = cd; say('Connecting to ' + cd + '…'); peer = new Peer();
+    peer.on('open', () => { const c = peer.connect('locus-rl-' + cd, { reliable: true }); wire(c); setTimeout(() => { if (!open().length) say('Could not reach ' + cd + '. Same Wi-Fi? Is the code right? Or press Share on this device instead.'); }, 9000); });
+    peer.on('error', e => say(e.type === 'peer-unavailable' ? 'No session with code ' + cd + '.' : 'Sync error: ' + e.type));
+  }
+  function leave() {
+    conns.forEach(c => { try { c.close(); } catch (e) { } }); conns = []; if (peer) { try { peer.destroy(); } catch (e) { } } peer = null; role = null;
+    $('b-leave').disabled = true; $('o-share').style.display = 'none'; say('Not connected.'); if (S.src === 'remote') setSource('demo');
+  }
+  /* called every tick (10 Hz) */
+  function pump(now) {
+    const oc = open(); if (!oc.length) return;
+    if (S.src !== 'demo' && S.src !== 'remote') oc.forEach(c => c.send({ t: 'pos', p: S.pos, h: S.heading, st: S.steps }));
+    if (now - posT > 400) { posT = now; const cur = JSON.stringify(cfgSnapshot()); if (cur !== lastSent && cur !== lastRecv) oc.forEach(c => c.send({ t: 'cfg', c: JSON.parse(cur) })); lastSent = cur; }
+  }
+  return { share, join, leave, pump, get active() { return open().length > 0; } };
+})();
+
 /* ---------- main loop ---------- */
 let acc = 0, lastT = performance.now(), frameN = 0;
 function loop(now) {
   const dt = Math.min(0.1, (now - lastT) / 1000); lastT = now; acc += dt;
   if (anim) { const k = Math.min(1, (now - anim.t0) / 600), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; S.view.tilt = anim.a + (anim.b - anim.a) * e; S.view.yaw = anim.c + (anim.d - anim.c) * e; syncView(); if (k >= 1) anim = null; }
-  while (acc >= 0.1) { acc -= 0.1; updateTruth(0.1); tick(); }
+  while (acc >= 0.1) { acc -= 0.1; updateTruth(0.1); tick(); Sync.pump(now); }
   hit = []; draw(); if (++frameN % 6 === 0) updateReport();
   requestAnimationFrame(loop);
 }
@@ -323,7 +398,8 @@ function init() {
   $('i-zd').value = S.zDev; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; S.zAssume = S.zDev; $('i-model').value = S.model; $('i-loss').value = S.loss * 100; $('v-loss').textContent = Math.round(S.loss * 100) + '%'; $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-step').value = S.stepLen; $('i-scale').value = S.scale;
   sigUI(); bindUI(); resize(); rebuild(false); spaceNote(); renderAnchors(); syncFaults(); syncView(); setSource('demo');
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { });
+  const jm = /join=(\d{4})/.exec(location.hash); if (jm) { document.querySelector('.tabs [data-t=track]').click(); $('i-code').value = jm[1]; setTimeout(() => Sync.join(jm[1]), 400); }
   requestAnimationFrame(loop);
-  window.__locus = { S, tick, get cur() { return cur; }, get stats() { return stats; }, phoneStep, setSource, rebuild, onMotion, onOri };
+  window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, phoneStep, setSource, rebuild, onMotion, onOri };
 }
 init();
