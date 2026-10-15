@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LOCUS · Room Live</title>
+<link rel="manifest" href="manifest-room.json">
+<meta name="theme-color" content="#22C3E6">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LOCUS Room">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --aqua:#22C3E6; --aqua-d:#0E9DBE; --aqua-l:#BFE9F3; --aqua-xl:#E6F8FC;
+  --em:#10B981; --em-d:#0B8A5E; --em-dd:#0A6B49; --em-l:#DDF6EA;
+  --ink:#0B3A4A; --ink2:#3F6572; --ink3:#7A9AA6; --bg:#F4FCFE; --card:#FFFFFF; --line:#CDEBF3;
+  --amber:#F5A524; --amber-l:#FFF1D6; --coral:#EF6A6A; --coral-l:#FFE3E3; --violet:#8B5CF6;
+  --grad:linear-gradient(135deg,#22C3E6 0%,#10B981 100%); --shadow:0 10px 28px rgba(34,195,230,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Figtree',system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;
+  background-image:radial-gradient(900px 400px at 85% -100px,rgba(34,195,230,.18),transparent 70%),radial-gradient(700px 380px at 0% 0%,rgba(16,185,129,.12),transparent 70%);background-repeat:no-repeat}
+h1,h2,h3,.sora{font-family:'Sora',sans-serif}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--aqua);outline-offset:2px}
+header{position:sticky;top:0;z-index:50;background:rgba(244,252,254,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.hrow{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 16px;max-width:1500px;margin:0 auto;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Sora';font-weight:700;letter-spacing:.12em}
+.logo small{font-weight:600;letter-spacing:.04em;color:var(--em-dd);background:var(--em-l);padding:3px 9px;border-radius:99px;font-size:12px}
+.hl{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink2);text-decoration:none;white-space:nowrap}
+.pill i{width:9px;height:9px;border-radius:50%;background:var(--ink3);display:inline-block}
+.pill.ok i{background:var(--em);box-shadow:0 0 0 3px rgba(16,185,129,.2)}.pill.warn i{background:var(--amber)}.pill.bad i{background:var(--coral)}
+a.pill:hover{border-color:var(--em);color:var(--em-dd)}
+.layout{display:grid;gap:14px;padding:14px 16px 28px;max-width:1500px;margin:0 auto;grid-template-columns:1fr}
+@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 410px;align-items:start}.stage{position:sticky;top:70px}}
+.stage{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+#cv{display:block;width:100%;height:min(62vh,640px);min-height:340px;touch-action:none;cursor:grab;background:linear-gradient(180deg,#F7FDFF,#EAF8FC)}
+#cv.drag{cursor:grabbing}
+.vbar{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;max-width:calc(100% - 24px)}
+.seg{display:flex;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:99px;padding:3px;gap:2px;box-shadow:0 4px 14px rgba(11,58,74,.08)}
+.seg button{height:30px;padding:0 12px;border-radius:99px;font-size:13px;font-weight:700;color:var(--ink2)}
+.seg button[aria-pressed=true]{background:var(--grad);color:#fff}
+.tiltbox{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:99px;padding:0 12px;height:36px;font-size:12px;font-weight:700;color:var(--ink2);box-shadow:0 4px 14px rgba(11,58,74,.08)}
+.tiltbox input{width:110px;accent-color:var(--em)}
+.hud{position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+.chip{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:14px;padding:6px 11px;font-size:12px;color:var(--ink2);box-shadow:0 4px 14px rgba(11,58,74,.07)}
+.chip b{display:block;font-family:'Sora';font-size:17px;color:var(--ink);line-height:1.15}
+.legend{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:5px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:14px;padding:8px 10px;font-size:12px;font-weight:600;color:var(--ink2)}
+.legend label{display:flex;gap:7px;align-items:center;cursor:pointer;user-select:none}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.legend label input{display:none}
+@media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
+.joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
+.joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line);background:var(--aqua-xl);overflow-x:auto}
+.tabs button{flex:1;min-width:76px;height:46px;font-weight:700;font-size:14px;color:var(--ink2);border-bottom:3px solid transparent}
+.tabs button[aria-selected=true]{color:var(--em-dd);background:#fff;border-bottom-color:var(--em)}
+.pane{padding:16px;display:none;flex-direction:column;gap:14px}.pane.on{display:flex}
+.pane h3{font-size:14px;letter-spacing:.02em;margin-bottom:-4px}
+.note{font-size:12.5px;line-height:1.45;color:var(--ink2)}.note b{color:var(--ink)}
+.note.warn{background:var(--amber-l);border-radius:12px;padding:9px 11px;color:#7a5200}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--ink2);flex:1;min-width:96px}
+.fld span.v{float:right;color:var(--ink);font-weight:700}
+.fld input[type=range]{width:100%;accent-color:var(--em)}
+.fld input[type=number],.fld select{height:38px;border:1.5px solid var(--aqua-l);border-radius:12px;padding:0 10px;background:#fff;font-weight:600;font-size:14px;width:100%}
+.btn{height:42px;padding:0 16px;border-radius:99px;border:1.5px solid var(--aqua-l);background:#fff;font-weight:700;font-size:14px;color:var(--ink)}
+.btn:hover{border-color:var(--em)}.btn.pri{background:var(--grad);border:0;color:#fff;box-shadow:0 6px 16px rgba(16,185,129,.28)}.btn.sm{height:34px;padding:0 12px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:default}
+.src{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.src button{border:1.5px solid var(--line);border-radius:14px;padding:10px;text-align:left;background:#fff;display:flex;flex-direction:column;gap:2px}
+.src button b{font-size:14px}.src button span{font-size:11.5px;color:var(--ink3);line-height:1.3}
+.src button[aria-pressed=true]{border-color:var(--em);background:var(--em-l)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;font-weight:600}
+.tg{width:46px;height:27px;border-radius:99px;background:#CFE1E7;position:relative;flex:none;transition:.2s}
+.tg::after{content:'';position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.tg[aria-pressed=true]{background:var(--em)}.tg[aria-pressed=true]::after{left:22px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--ink3);font-weight:700;padding:5px 4px;border-bottom:1px solid var(--line);font-size:11.5px}
+td{padding:7px 4px;border-bottom:1px solid #EAF6FA;vertical-align:middle}
+.tb{height:7px;border-radius:9px;background:#E2F1F6;overflow:hidden;min-width:44px}.tb i{display:block;height:100%;border-radius:9px}
+.an{border:1.5px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.an.sel{border-color:var(--em);background:#FAFFFC}
+.an header{all:unset;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;cursor:pointer}
+.an .dz{margin-left:auto;font-size:12px;color:var(--aqua-d);font-weight:700}
+.faults{display:flex;gap:6px;flex-wrap:wrap}
+.faults button{height:28px;padding:0 10px;border-radius:99px;border:1.5px solid var(--line);font-size:12px;font-weight:700;color:var(--ink2);background:#fff}
+.faults button[aria-pressed=true].k{background:var(--coral-l);border-color:var(--coral);color:#b13a3a}
+.faults button[aria-pressed=true].o{background:var(--amber-l);border-color:var(--amber);color:#8a5a00}
+.faults button[aria-pressed=true].d{background:#EFE9FE;border-color:var(--violet);color:#5b34c4}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--aqua-xl);border-radius:14px;padding:9px 10px}.kpi small{display:block;font-size:11px;color:var(--ink3);font-weight:700}.kpi b{font-family:'Sora';font-size:18px}.kpi.g{background:var(--em-l)}
+#spark{width:100%;height:96px;display:block;border-radius:12px;background:#F7FDFF;border:1px solid var(--line)}
+code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
+.url{display:flex;gap:6px}.url input{flex:1;height:36px;border:1.5px solid var(--aqua-l);border-radius:10px;padding:0 10px;font-size:12.5px}
+</style>
+</head>
+<body>
+<header><div class="hrow">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22C3E6"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs><path d="M16 2c-5.5 0-10 4.4-10 9.8C6 19 16 30 16 30s10-11 10-18.2C26 6.4 21.500 2 16 2z" fill="url(#lg)"/><circle cx="16" cy="12" r="4" fill="#fff"/></svg>LOCUS <small>Room Live</small></div>
+  <div class="hl"><span class="pill" id="p-src"><i></i><span>Demo walker</span></span><span class="pill" id="p-mode"><i></i><span>Simulated radio</span></span>
+    <a class="pill" href="LOCUS-Dashboard.html">Dashboard</a><a class="pill" href="LOCUS-Staff-App.html">Staff app</a></div>
+</div></header>
+
+<div class="layout">
+  <section class="stage" aria-label="3D floor view">
+    <canvas id="cv" aria-label="3D view of the room, anchors and tracked phone"></canvas>
+    <div class="vbar">
+      <div class="seg" id="views"><button data-v="top" aria-pressed="true">Top</button><button data-v="iso" aria-pressed="false">Angled</button><button data-v="side" aria-pressed="false">Side</button></div>
+      <div class="tiltbox">Tilt <input type="range" id="tilt" min="8" max="90" value="90" aria-label="Camera tilt"><span id="tiltv">90°</span></div>
+      <div class="tiltbox">Turn <input type="range" id="yaw" min="-180" max="180" value="0" aria-label="Camera rotation"><span id="yawv">0°</span></div>
+    </div>
+    <div class="legend">
+      <label><i style="background:#0B3A4A"></i><input type="checkbox" id="L-truth" checked hidden>Phone (truth)</label>
+      <label><i style="background:#10B981"></i><input type="checkbox" id="L-locus" checked hidden>LOCUS</label>
+      <label><i style="background:#F5A524"></i><input type="checkbox" id="L-ls" checked hidden>Plain trilateration</label>
+      <label><i style="background:#8B5CF6"></i><input type="checkbox" id="L-kf" hidden>Kalman</label>
+      <label><i style="background:#22C3E6"></i><input type="checkbox" id="L-pt" checked hidden>Particles</label>
+    </div>
+    <div class="joy" id="joy"><b id="joyk"></b></div>
+    <div class="hud">
+      <div class="chip">LOCUS error<b id="h-err">–</b></div>
+      <div class="chip">Plain trilateration<b id="h-ls">–</b></div>
+      <div class="chip">Height (est · true)<b id="h-z">–</b></div>
+      <div class="chip">Anchors heard<b id="h-n">–</b></div>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="track">Track</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
+
+    <div class="pane on" id="t-track">
+      <h3>How is the dot moved?</h3>
+      <div class="src" id="srcs">
+        <button data-s="demo" aria-pressed="true"><b>Demo walker</b><span>Auto-walks a loop. No sensors needed.</span></button>
+        <button data-s="touch" aria-pressed="false"><b>Tap / keys</b><span>Tap the floor to walk there. WASD / arrows / joystick.</span></button>
+        <button data-s="phone" aria-pressed="false"><b>Phone motion</b><span>Walk with your phone: steps + compass move the dot.</span></button>
+        <button data-s="gps" aria-pressed="false"><b>GPS</b><span>Big rooms / outdoors. Weak indoors.</span></button>
+      </div>
+      <div id="o-phone" hidden style="display:none;flex-direction:column;gap:12px">
+        <div class="row"><button class="btn pri" id="b-sens">Enable phone sensors</button><button class="btn sm" id="b-align">Face the top wall → Align</button><button class="btn sm" id="b-step">+1 test step</button></div>
+        <div class="note" id="n-sens">Hold the phone flat in front of you (screen up) or upright, then walk. Press <b>Align</b> while facing the <b>top wall</b> of the map so compass heading matches the room.</div>
+        <div class="row"><label class="fld">Your height (cm)<input type="number" id="i-hgt" value="170" min="120" max="220"></label><label class="fld">Step length (m)<input type="number" id="i-step" step="0.01" value="0.70" min="0.3" max="1.2"></label><label class="fld">Walk scale ×<input type="number" id="i-scale" step="0.5" value="1" min="0.5" max="20"></label></div>
+        <label class="fld">Heading fine-tune <span class="v" id="v-off">0°</span><input type="range" id="i-off" min="-180" max="180" value="0"></label>
+        <div class="note" id="n-ph">Steps 0 · heading –</div>
+      </div>
+      <div id="o-gps" style="display:none;flex-direction:column;gap:10px">
+        <div class="row"><button class="btn pri" id="b-gps">Start GPS</button><button class="btn sm" id="b-gps0">Set origin here</button></div>
+        <div class="note warn">GPS is metres-accurate at best and usually fails indoors. Use it outdoors or in a hall; otherwise use Phone motion.</div>
+        <div class="note" id="n-gps">GPS off.</div>
+      </div>
+      <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
+      <h3>Open this on your phone</h3>
+      <div class="url"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div>
+      <div class="note">Phone sensors need HTTPS (this GitHub Pages link is). Android Chrome and iPhone Safari both work; iPhone asks permission once.</div>
+    </div>
+
+    <div class="pane" id="t-space">
+      <h3>Space</h3>
+      <div class="seg" id="spaces" style="align-self:flex-start"><button data-sp="room" aria-pressed="true">My room</button><button data-sp="hospital" aria-pressed="false">Hospital (trained map)</button></div>
+      <div class="note" id="n-space"></div>
+      <div id="o-room" style="display:flex;flex-direction:column;gap:12px">
+        <div class="row"><label class="fld">Width (m) <span class="v" id="v-W">5.0</span><input type="range" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth (m) <span class="v" id="v-H">4.0</span><input type="range" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
+        <label class="fld">Ceiling height (m) <span class="v" id="v-Z">2.7</span><input type="range" id="i-Z" min="2" max="8" step="0.1" value="2.7"></label>
+        <div class="sw">Partition wall with door (NLOS test)<button class="tg" id="g-part" aria-pressed="false" aria-label="Partition"></button></div>
+      </div>
+      <label class="fld">Anchors <span class="v" id="v-n">5</span><input type="range" id="i-n" min="2" max="6" step="1" value="5"></label>
+      <h3>Phone height</h3>
+      <label class="fld">Held at <span class="v" id="v-zd">1.30 m</span><input type="range" id="i-zd" min="0" max="2.6" step="0.05" value="1.3"></label>
+      <div class="row"><div class="seg" id="zpre"><button data-z="0.05">Floor</button><button data-z="0.9">Pocket</button><button data-z="1.3">Hand</button><button data-z="2.0">Overhead</button></div></div>
+      <div class="sw">System knows the height<button class="tg" id="g-zknow" aria-pressed="true" aria-label="Height known"></button></div>
+      <label class="fld" id="f-zas" style="display:none">Height the system assumes <span class="v" id="v-za">1.30 m</span><input type="range" id="i-za" min="0" max="2.6" step="0.05" value="1.3"></label>
+      <div class="note">The engine solves position on the floor plane, so it converts every 3D range to a horizontal one using the height difference. If the assumed height is wrong the error grows — turn <b>System knows the height</b> off to see it. With ≥4 anchors at different heights LOCUS also <b>estimates your height</b> (shown top-left of the view).</div>
+      <h3>Anchors <span class="note">(tap to select · drag in Top/Angled view to move)</span></h3>
+      <div id="anchors" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div class="pane" id="t-radio">
+      <h3>Radio model</h3>
+      <label class="fld">Noise model<select id="i-model"><option value="rssi">Realistic RSSI (dB shadowing, 1 dB steps)</option><option value="add">Benchmark (additive metres, as in the trained dataset)</option></select></label>
+      <label class="fld"><span>Noise level</span><span class="v" id="v-sig">4 dB</span><input type="range" id="i-sig" min="0" max="10" step="0.5" value="4"></label>
+      <label class="fld">Packet loss <span class="v" id="v-loss">10%</span><input type="range" id="i-loss" min="0" max="60" step="1" value="10"></label>
+      <div class="row"><label class="fld">RSSI @ 1 m (dBm)<input type="number" id="i-r1" value="-59" step="1"></label><label class="fld">Path-loss n<input type="number" id="i-pn" value="2.2" step="0.1" min="1.5" max="4"></label></div>
+      <h3>Trust scorer</h3>
+      <div class="seg" id="scorer" style="align-self:flex-start"><button data-sc="heuristic" aria-pressed="true">Heuristic</button><button data-sc="ml" aria-pressed="false">ML (LightGBM)</button></div>
+      <div class="note" id="n-ml"></div>
+      <h3>Inject faults</h3>
+      <div class="note">Select an anchor in the Space tab or tap one in the view, then:</div>
+      <div class="faults" id="faults"><button class="k" data-f="dead" aria-pressed="false">Kill anchor</button><button class="o" data-f="obstruct" aria-pressed="false">Block with body</button><button class="d" data-f="drift" aria-pressed="false">Drift / bias</button><button data-f="clear" aria-pressed="false">Clear all</button></div>
+    </div>
+
+    <div class="pane" id="t-report">
+      <div class="kpis"><div class="kpi g"><small>LOCUS median</small><b id="k-m1">–</b></div><div class="kpi"><small>Trilateration</small><b id="k-m2">–</b></div><div class="kpi"><small>Kalman</small><b id="k-m3">–</b></div><div class="kpi g"><small>LOCUS 95%</small><b id="k-p1">–</b></div><div class="kpi"><small>Trilat. 95%</small><b id="k-p2">–</b></div><div class="kpi"><small>Samples</small><b id="k-n">0</b></div></div>
+      <canvas id="spark"></canvas>
+      <div class="note">Error against the phone's own dead-reckoned path (the "truth" here). Phone drift is not counted — see the honesty notes below.</div>
+      <table><thead><tr><th>Anchor</th><th>RSSI</th><th>Range</th><th>Trust</th></tr></thead><tbody id="tb"></tbody></table>
+      <div class="note" id="n-reason"></div>
+      <div class="row"><button class="btn pri sm" id="b-csv">Download session CSV</button><button class="btn sm" id="b-clear">Clear stats</button></div>
+      <div class="note warn"><b>What is real and what is not.</b> The motion of the dot is real (your phone's step counter and compass). The radio signal is <b>synthetic</b>: LOCUS computes the RSSI the anchors <i>would</i> hear from the phone's true position, adds noise, and the engine localises from that. "Truth" is dead-reckoned from the phone, so it drifts over minutes; use short walks, press Align often. Real BLE hardware is the Staff app's Live BLE tab.</div>
+    </div>
+  </aside>
+</div>
+<script>
+/*__ENGINE__*/
+/*__TRUST__*/
+/*__CORE__*/
+/*__APP__*/
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LOCUS · Indoor positioning with sparse beacons</title>
+<link rel="icon" href="icons/favicon.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="theme-color" content="#22C3E6">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B3A4A;--ink2:#3F6572;--line:#CDEBF3;--em:#10B981;--aqua:#22C3E6}
+*{box-sizing:border-box;margin:0}body{font-family:Figtree,system-ui,sans-serif;color:var(--ink);background:#F4FCFE;min-height:100vh;padding:28px 18px;background-image:radial-gradient(900px 400px at 85% -100px,rgba(34,195,230,.2),transparent 70%),radial-gradient(700px 380px at 0 0,rgba(16,185,129,.14),transparent 70%);background-repeat:no-repeat}
+main{max-width:920px;margin:0 auto}h1{font:700 clamp(30px,6vw,52px)/1.05 Sora;letter-spacing:.02em}h1 span{background:linear-gradient(135deg,#22C3E6,#10B981);-webkit-background-clip:text;color:transparent}
+.lead{margin:14px 0 26px;font-size:18px;line-height:1.5;color:var(--ink2);max-width:640px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+a.c{display:flex;flex-direction:column;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:20px;text-decoration:none;color:inherit;box-shadow:0 10px 28px rgba(34,195,230,.12);transition:.2s}
+a.c:hover{transform:translateY(-3px);border-color:var(--em)}a.c.hero{background:linear-gradient(135deg,#22C3E6,#10B981);color:#fff;border:0;grid-column:1/-1}
+a.c b{font:700 20px Sora}a.c span{font-size:14.5px;line-height:1.45;opacity:.9}.tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.honest{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:14px;line-height:1.55;color:var(--ink2)}.honest b{color:var(--ink)}
+</style></head><body><main>
+<h1>L.O.C.U.S <span>Room Live</span></h1>
+<p class="lead">Explainable indoor positioning with a handful of cheap BLE anchors. Now you can walk through your own room with your phone and watch the system track you in 3D.</p>
+<div class="cards">
+<a class="c hero" href="room.html"><span class="tag">New · try this first</span><b>Room Live — walk and watch</b><span>Your phone's steps and compass move the dot. Switch the camera from top-down to side-on, give anchors different heights, and see LOCUS estimate your position <i>and</i> height against plain trilateration — live.</span></a>
+<a class="c" href="LOCUS-Dashboard.html"><b>Dashboard</b><span>Hospital &amp; warehouse simulation, fault injection, benchmark, error CDF.</span></a>
+<a class="c" href="LOCUS-Staff-App.html"><b>Staff app</b><span>Phone-first alerts, equipment finder and the optional Live BLE scan tab.</span></a>
+</div>
+<div class="honest"><b>What is real:</b> the engine, trust scorer and your phone's motion. <b>What is simulated:</b> the radio signal — until real beacons are paired in the Staff app's Live BLE tab. Benchmark on the hidden simulated set: 2.7 m median, 39% within 2 m, 6 anchors. Everything runs in your browser; nothing is uploaded.</div>
+</main></body></html>
