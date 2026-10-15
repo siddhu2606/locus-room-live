@@ -23,6 +23,16 @@ const { launch } = require('./cdp.js'); let fail = 0; const ok = (c, m) => { con
   ok(await A.ev(`Math.abs(__locus.S.zDev-2.0)<0.01`), 'phone height patch reaches the room (zDev=2.0)');
   await A.ev(`document.querySelector('#spaces [data-sp=hospital]').click()`); await B.sleep(2500);
   ok(await B.ev(`__phone.P.space==='hospital' && __phone.P.W===40`), 'switching the room to Hospital updates the phone map');
+  /* remote controls on the phone page */
+  await B.ev(`document.querySelector('#rc-scorer [data-v=ml]').click()`); await B.sleep(1200);
+  ok(await A.ev(`__locus.S.scorer==='ml'`), 'phone toggles ML trust scorer on the room');
+  const aid = await B.ev(`document.querySelector('#rc-anch .ach').dataset.id`); await B.ev(`document.querySelector('#rc-anch .ach').click()`); await B.sleep(1200);
+  ok(await A.ev(`__locus.S.dead.has('${aid}')`), 'phone kills anchor ' + aid + ' on the room (fault injection)');
+  await B.ev(`document.querySelector('#rc-space [data-v=room]').click()`); await B.sleep(2500);
+  ok(await A.ev(`__locus.S.space==='room'`) && await B.ev(`__phone.P.space==='room'`), 'phone switches back to My room');
+  await B.ev(`document.querySelector('#srcs [data-s=tap]').click(); __phone.P.target=[1.0,1.0]`); await B.sleep(4500);
+  const tp = JSON.parse(await B.ev(`JSON.stringify(__phone.P.pos)`)); ok(Math.hypot(tp[0] - 1, tp[1] - 1) < 0.4, 'Tap-map source walks to the tapped point: ' + tp.map(v => v.toFixed(1)));
+  ok(await B.ev(`document.getElementById('b-gps')!==null`), 'GPS option present on phone page');
   await A.shot('docs/shot_pair_room.png'); await B.shot('docs/shot_pair_phone.png');
   ok(!A.logs.length && !B.logs.length, 'no console errors ' + [...A.logs, ...B.logs].join(' | ')); A.close(); B.close(); console.log(fail ? fail + ' FAILED' : 'ALL PASSED'); process.exit(fail ? 1 : 0);
 })();

@@ -849,7 +849,7 @@ function bindUI() {
   $('b-reset').onclick = () => { S.trail = []; S.estTrail = []; }; $('b-trail').onclick = e => { S.showTrail = !S.showTrail; e.target.textContent = 'Trail: ' + (S.showTrail ? 'on' : 'off'); if (!S.showTrail) S.trail = []; };
   $('b-copy').onclick = () => { $('i-url').select(); try { navigator.clipboard.writeText($('i-url').value); } catch (e) { document.execCommand('copy'); } };
   $('b-share').onclick = () => Sync.share(); $('b-join').onclick = () => Sync.join($('i-code').value.trim()); $('b-leave').onclick = () => Sync.leave();
-  document.querySelectorAll('#spaces button').forEach(b => b.onclick = () => { S.space = b.dataset.sp; setSeg('spaces', 'sp', S.space); if (S.space === 'hospital') { $('i-scale').value = S.scale = 8; S.model = 'add'; $('i-model').value = 'add'; S.sigM = 0.8; sigUI(); S.pos = [3, 12]; } else { $('i-scale').value = S.scale = 1; S.model = 'rssi'; $('i-model').value = 'rssi'; sigUI(); S.pos = [S.W / 2, S.H / 2]; S.Z = +$('i-Z').value; S.W = +$('i-W').value; S.H = +$('i-H').value; } S.dead.clear(); S.obstruct.clear(); S.drift.clear(); demoI = 0; rebuild(false); spaceNote(); renderAnchors(); });
+  document.querySelectorAll('#spaces button').forEach(b => b.onclick = () => setSpace(b.dataset.sp));
   const sl = (id, k, fmt, after) => { $('i-' + id).oninput = e => { S[k] = +e.target.value; $('v-' + id).textContent = fmt(S[k]); after && after(); save(); }; };
   sl('W', 'W', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('H', 'H', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('Z', 'Z', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); });
   $('i-n').oninput = e => { S.n = +e.target.value; $('v-n').textContent = S.n; S.anchors = S.all.slice(0, S.n); S.sel = Math.min(S.sel, S.n - 1); newEngine(); renderAnchors(); save(); };
@@ -885,6 +885,7 @@ function bindUI() {
   jy.onpointerdown = e => { jd = true; jy.setPointerCapture(e.pointerId); jm(e); }; jy.onpointermove = e => { if (jd) jm(e); }; jy.onpointerup = jy.onpointercancel = () => { jd = false; joy = { x: 0, y: 0 }; jk.style.transform = ''; };
   addEventListener('resize', resize);
 }
+function setSpace(sp) { S.space = sp; setSeg('spaces', 'sp', S.space); if (S.space === 'hospital') { $('i-scale').value = S.scale = 8; S.model = 'add'; $('i-model').value = 'add'; S.sigM = 0.8; sigUI(); S.pos = [3, 12]; } else { $('i-scale').value = S.scale = 1; S.model = 'rssi'; $('i-model').value = 'rssi'; sigUI(); S.pos = [S.W / 2, S.H / 2]; S.Z = +$('i-Z').value; S.W = +$('i-W').value; S.H = +$('i-H').value; } S.dead.clear(); S.obstruct.clear(); S.drift.clear(); demoI = 0; rebuild(false); spaceNote(); renderAnchors(); }
 function renderAnchorsDz() { document.querySelectorAll('#anchors .an').forEach(el => { const a = S.anchors[+el.dataset.i], dz = a.z - S.zDev, s = el.querySelector('.dz'); if (s) s.textContent = (dz >= 0 ? '↑ ' : '↓ ') + Math.abs(dz).toFixed(1) + ' m ' + (dz >= 0 ? 'above' : 'below') + ' phone'; }); }
 function sigUI() { const r = S.model === 'rssi', el = $('i-sig'); el.max = r ? 10 : 3; el.step = r ? 0.5 : 0.1; el.value = r ? S.sigDb : S.sigM; $('v-sig').textContent = el.value + (r ? ' dB' : ' m'); }
 function setSource(s) {
@@ -952,7 +953,7 @@ const Sync = (() => {
     });
     c.on('data', d => {
       if (d.t === 'cfg') { lastRecv = JSON.stringify(d.c); if (lastRecv !== JSON.stringify(cfgSnapshot())) applyCfg(d.c); lastSent = JSON.stringify(cfgSnapshot()); }
-      else if (d.t === 'patch') { const c2 = Object.assign(cfgSnapshot(), d.k || {}); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
+      else if (d.t === 'patch') { const k = Object.assign({}, d.k || {}); if (k.space && k.space !== S.space) { setSpace(k.space); } delete k.space; const c2 = Object.assign(cfgSnapshot(), k); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
       else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
     });
     c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { pairState(false); say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });

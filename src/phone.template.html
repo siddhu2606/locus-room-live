@@ -29,6 +29,7 @@ main{display:flex;flex-direction:column;gap:12px;padding:12px 14px;max-width:560
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .btn{height:50px;padding:0 18px;border-radius:99px;border:1.5px solid var(--aqua-l);background:#fff;font-weight:700;font-size:15px;flex:1;min-width:120px}
 .btn.pri{background:var(--grad);border:0;color:#fff;box-shadow:0 6px 16px rgba(16,185,129,.28)}.btn.sm{height:40px;font-size:13.5px;min-width:90px}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.5}
+.ach{height:40px;min-width:62px;border-radius:99px;border:1.5px solid var(--line);font-weight:700;font-size:13px;background:#fff;color:var(--ink2);flex:0 0 auto;padding:0 12px}.ach.k{background:#FFE3E3;border-color:var(--coral);color:#b13a3a}.ach.o{background:var(--amber-l);border-color:var(--amber);color:#8a5a00}.ach.d{background:#EFE9FE;border-color:#8B5CF6;color:#5b34c4}
 .code{display:flex;gap:8px}.code input{flex:1;height:52px;border:1.5px solid var(--aqua-l);border-radius:14px;text-align:center;font:700 26px Sora;letter-spacing:.25em;min-width:0;-webkit-user-select:text;user-select:text}
 canvas{width:100%;display:block;border-radius:14px;background:linear-gradient(180deg,#F7FDFF,#EAF8FC);touch-action:none}
 .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kv div{background:var(--aqua-xl);border-radius:12px;padding:8px 10px}.kv small{display:block;font-size:11px;color:var(--ink3);font-weight:700}.kv b{font:700 17px Sora}
@@ -50,14 +51,21 @@ a{color:var(--em-dd);font-weight:700}
   </section>
 
   <section class="card">
-    <h2><span class="num">2</span>Turn on motion sensors</h2>
+    <h2><span class="num">2</span>How do you move?</h2>
+    <div class="seg" id="srcs"><button data-s="motion" class="on">Phone motion</button><button data-s="gps">GPS</button><button data-s="tap">Tap map</button></div>
+    <div class="note" id="n-src">Steps from the accelerometer + compass direction. Works indoors.</div>
+    <div id="o-gps" style="display:none;flex-direction:column;gap:8px"><div class="row"><button class="btn pri sm" id="b-gps">Start GPS</button><button class="btn sm" id="b-gps0">Set origin here</button></div><div class="note warn">GPS is metres-accurate at best and usually fails indoors. Use it outdoors / in a big hall. It maps your real movement onto the map centred where you press "Set origin". Use Heading fine-tune to rotate.</div><div class="note" id="n-gps">GPS off.</div></div>
+  </section>
+
+  <section class="card" id="c-sens">
+    <h2><span class="num">3</span>Turn on motion sensors</h2>
     <div class="row"><button class="btn pri" id="b-sens">Enable sensors</button><button class="btn" id="b-align">Align: facing top wall</button></div>
     <div class="note" id="n-sens">Hold the phone flat in front of you, face the <b>top wall</b> of the map, tap <b>Align</b>, then walk. Keep this screen on.</div>
     <div class="note" id="n-ph"></div>
   </section>
 
   <section class="card">
-    <h2><span class="num">3</span>You in the room</h2>
+    <h2><span class="num">4</span>You in the room</h2>
     <canvas id="map" height="260"></canvas>
     <div class="kv"><div><small>Position</small><b id="k-pos">–</b></div><div><small>LOCUS error</small><b id="k-err">–</b></div><div><small>Anchors heard</small><b id="k-n">–</b></div></div>
     <button class="btn" id="hold">Hold to walk forward</button>
@@ -65,12 +73,27 @@ a{color:var(--em-dd);font-weight:700}
   </section>
 
   <section class="card">
-    <h2><span class="num">4</span>About you</h2>
+    <h2><span class="num">5</span>About you</h2>
     <div class="row"><label class="fld">Height (cm)<input type="number" id="i-hgt" value="170" min="120" max="220"></label><label class="fld">Step (m)<input type="number" id="i-step" step="0.01" value="0.70"></label><label class="fld">Walk scale ×<input type="number" id="i-scale" step="0.5" value="1" min="0.5" max="20"></label></div>
     <label class="fld">Step sensitivity <span class="v" id="v-sens">×1.0</span><input type="range" id="i-sens" min="0.4" max="3" step="0.1" value="1"></label>
     <label class="fld">Heading fine-tune <span class="v" id="v-off">0°</span><input type="range" id="i-off" min="-180" max="180" value="0"></label>
     <div class="note" style="margin-bottom:-4px"><b>How high you hold the phone</b> (used for the 3D height view):</div>
     <div class="seg" id="zpre"><button data-z="0.05">Floor</button><button data-z="0.9">Pocket</button><button data-z="1.3" class="on">Hand</button><button data-z="2.0">Overhead</button></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">6</span>Room controls <small style="font-weight:600;color:var(--ink3)">(remote for the Live Room)</small></h2>
+    <div class="note" id="n-rc">Connect to the Live Room to control it from here.</div>
+    <div id="rc" style="display:none;flex-direction:column;gap:12px">
+      <div class="seg" id="rc-space"><button data-v="room">My room</button><button data-v="hospital">Hospital (trained map)</button></div>
+      <div id="rc-size" class="row"><label class="fld">Width <span class="v" id="v-rW">5</span><input type="range" id="r-W" min="2" max="40" step="0.5"></label><label class="fld">Depth <span class="v" id="v-rH">4</span><input type="range" id="r-H" min="2" max="24" step="0.5"></label></div>
+      <label class="fld">Anchors <span class="v" id="v-rn">5</span><input type="range" id="r-n" min="2" max="6" step="1"></label>
+      <div class="seg" id="rc-scorer"><button data-v="heuristic">Heuristic trust</button><button data-v="ml">ML (LightGBM)</button></div>
+      <label class="fld"><span id="l-sig">Noise</span> <span class="v" id="v-rsig">4</span><input type="range" id="r-sig" min="0" max="10" step="0.5"></label>
+      <label class="fld">Packet loss <span class="v" id="v-rloss">10%</span><input type="range" id="r-loss" min="0" max="60" step="1"></label>
+      <div class="note"><b>Faults</b> — tap an anchor to cycle: normal → killed → blocked by body → drifting:</div>
+      <div class="row" id="rc-anch"></div>
+    </div>
   </section>
 
   <div class="note warn"><b>Honest note.</b> Your steps and compass are real. The radio signal the anchors "hear" is simulated by the Live Room from your position. Compass indoors drifts: tap Align again if the dot walks the wrong way. <a href="room.html">Open Live Room</a> · <a href="index.html">Home</a></div>
