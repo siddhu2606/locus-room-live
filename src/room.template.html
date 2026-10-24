@@ -39,7 +39,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(244,252,254,.86);backdro
 .pill.ok i{background:var(--em);box-shadow:0 0 0 3px rgba(16,185,129,.2)}.pill.warn i{background:var(--amber)}.pill.bad i{background:var(--coral)}
 a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .layout{display:grid;gap:14px;padding:14px 16px 28px;max-width:1500px;margin:0 auto;grid-template-columns:1fr}
-@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 440px;align-items:start}.stage{position:sticky;top:70px}}
+@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 440px;align-items:start}}
 .stage{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
 #cv{display:block;width:100%;height:min(62vh,640px);min-height:340px;touch-action:none;cursor:grab;background:linear-gradient(180deg,#F7FDFF,#EAF8FC)}
 #cv.drag{cursor:grabbing}
@@ -109,17 +109,38 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
 .lay{gap:6px}.lay button{height:32px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}.lay button.on{background:var(--em);border-color:var(--em);color:#fff}
 .tw{overflow-x:auto;margin:0 -4px}
 .bt th{text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;white-space:nowrap}.bt td{padding:5px 3px;white-space:nowrap}
-.bt input[type=number]{width:50px;height:28px;border:1.5px solid var(--aqua-l);border-radius:8px;padding:0 5px;font-size:12.5px;font-weight:600;background:#fff}
+.bt input[type=number]{width:46px;height:28px;border:1.5px solid var(--aqua-l);border-radius:8px;padding:0 5px;font-size:12.5px;font-weight:600;background:#fff}
 .bt input[type=checkbox]{width:16px;height:16px;accent-color:var(--em)}
 .bt tr.off td:not(:nth-child(2)){opacity:.45}
 .bt .cal{height:26px;padding:0 9px;border-radius:99px;border:1.5px solid var(--aqua-l);font-size:12px;font-weight:700;background:#fff}.bt .cal.set{border-color:var(--em);color:var(--em-dd)}
 .hd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ink3);margin-left:5px;vertical-align:middle}.hd.ok{background:var(--em)}.hd.warn{background:var(--amber)}.hd.bad{background:var(--coral)}
 .warnbox{border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5;height:84px;overflow-y:auto;transition:background .3s,color .3s}
 #n-why{min-height:3em;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.bt{table-layout:fixed;font-variant-numeric:tabular-nums}.bt th:nth-child(1){width:34px}.bt th:nth-child(2){width:34px}.bt th:nth-child(3),.bt th:nth-child(4){width:58px}.bt th:nth-child(5){width:64px}.bt th:nth-child(6){width:50px}.bt th:nth-child(8){width:66px}.bt td{overflow:hidden;text-overflow:ellipsis}
-.bt .cal{min-width:58px}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
+.bt{table-layout:fixed;font-variant-numeric:tabular-nums}.bt th:nth-child(1){width:34px}.bt th:nth-child(2){width:30px}.bt th:nth-child(3),.bt th:nth-child(4){width:52px}.bt th:nth-child(5){width:62px}.bt th:nth-child(6){width:50px}.bt th:nth-child(8){width:58px}.bt .tb{min-width:0}.bt td{overflow:hidden;text-overflow:ellipsis}
+.bt .cal{min-width:0;width:54px;padding:0 4px}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
 .gcal{border:1.5px dashed var(--aqua);border-radius:12px;padding:10px;display:none;flex-direction:column;gap:6px}.gcal .prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.gcal .prog i{display:block;height:100%;width:0;background:var(--grad)}
 .lnk{color:var(--aqua-d);font-weight:700;text-decoration:underline;padding:0}
+.lcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.trust{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.trh{display:flex;gap:12px 18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}.trh>div:first-child{flex:1 1 320px;display:flex;flex-direction:column;gap:4px}.trh h2{font:700 18px Sora;color:var(--ink)}
+.trk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.trk>div{background:var(--aqua-xl);border-radius:14px;padding:9px 11px;display:flex;flex-direction:column;min-width:0}.trk small{font-size:11px;font-weight:700;color:var(--ink3)}.trk b{font:700 19px Sora;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.3}.trk span{font-size:11.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shw{display:flex;flex-direction:column;gap:6px}.shw small{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}.shw small span{text-transform:none;letter-spacing:0;font-weight:600}
+.sharebar{display:flex;height:28px;border-radius:8px;overflow:hidden;background:#E2F1F6}.sharebar div{flex:none;box-sizing:border-box;border-right:2px solid #fff;display:flex;align-items:center;justify-content:center;font:700 11.5px Figtree;color:#fff;overflow:hidden;white-space:nowrap;min-width:0;transition:width .25s linear}.sharebar div:last-child{border-right:0}
+.tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.tc{border:1.5px solid var(--line);border-radius:14px;padding:10px 11px;display:flex;flex-direction:column;gap:6px;min-width:0}.tc.dead{border-color:var(--coral);background:#FFF8F8}.tc.blk{border-color:var(--amber)}.tc.drf{border-color:var(--violet)}
+.tc .top{display:flex;align-items:center;gap:7px}.tc .sq{width:12px;height:12px;border-radius:4px;flex:none}.tc .top b{font:700 14px Sora}
+.tc .st{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:1px 7px;border-radius:99px;border:1.5px solid var(--line);color:var(--ink2)}.tc .st.dead{border-color:var(--coral);color:#b13a3a}.tc .st.blk{border-color:var(--amber);color:#8a5a00}.tc .st.drf{border-color:var(--violet);color:#5b34c4}.tc .st.real{border-color:var(--em);color:var(--em-dd)}
+.tc .acts{display:flex;gap:6px;margin-top:2px}.tc .top .st{margin-left:auto}.tc .acts button{height:28px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line);font-size:11.5px;font-weight:700;color:var(--ink2);background:#fff}.tc .acts button[aria-pressed=true]{background:var(--coral-l);border-color:var(--coral);color:#b13a3a}.tc .acts button.o[aria-pressed=true]{background:var(--amber-l);border-color:var(--amber);color:#8a5a00}
+.tc .kv{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}.tc .kv b{color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tc .kv b.big{font:700 17px Sora}
+.tc .mt{height:8px;border-radius:9px;background:#E2F1F6;overflow:hidden}.tc .mt i{display:block;height:100%;border-radius:9px;transition:width .2s linear}
+.tc .why{font-size:12px;color:var(--ink2);line-height:1.35;height:2.7em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.trow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}.trow h3{font-size:14px}
+.tleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;font-weight:700;color:var(--ink2)}.tleg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.tbox{position:relative;height:200px}.tbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.ttip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font:600 11.5px/1.45 Figtree;padding:6px 9px;border-radius:8px;white-space:nowrap;transform:translate(-50%,calc(-100% - 8px));z-index:5}
+.rules{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}.rules summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--ink)}.rules ul{margin:8px 0 0;padding-left:1.2em;display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--ink2)}
+.formula{margin-top:10px;background:var(--aqua-xl);border-radius:10px;padding:10px 12px;font:12px/1.75 ui-monospace,Consolas,monospace;color:var(--ink);overflow-x:auto;white-space:pre}
+@media(max-width:700px){.trk{grid-template-columns:repeat(2,minmax(0,1fr))}.trust{padding:12px}}
 </style>
 </head>
 <body>
@@ -130,6 +151,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
 </div></header>
 
 <div class="layout">
+  <div class="lcol">
   <section class="stage" aria-label="3D floor view">
     <canvas id="cv" aria-label="3D view of the room, anchors and tracked phone"></canvas>
     <div class="vbar">
@@ -153,6 +175,30 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <div class="chip">Anchors heard<b id="h-n">–</b></div>
     </div>
   </section>
+
+  <section class="trust" id="trust" aria-label="Trust scorer">
+    <div class="trh"><div><h2>Trust scorer</h2><div class="note">Every reading from every beacon gets a trust score from 0 to 1. The position fix weights each beacon by trust², so a bad beacon is out-voted instead of dragging the dot.</div></div>
+      <div class="seg" id="scorer"><button data-sc="heuristic" aria-pressed="true">Heuristic</button><button data-sc="ml" aria-pressed="false">ML (LightGBM)</button></div></div>
+    <div class="trk"><div><small>Usable this reading</small><b id="t-use">–</b><span id="t-use2">–</span></div><div><small>Lowest trust</small><b id="t-low">–</b><span id="t-low2">–</span></div><div><small>Uncertainty (90%)</small><b id="t-ell">–</b><span>long half-axis of the ellipse</span></div><div><small>LOCUS vs trilateration</small><b id="t-err">–</b><span id="t-err2">–</span></div></div>
+    <div class="shw"><small>Share of the position fix <span>(weight = trust²)</span></small><div class="sharebar" id="share"></div></div>
+    <div class="tcards" id="tcards"></div>
+    <div class="trow"><h3>Trust over the last 20 s</h3><div class="tleg" id="tleg"></div></div>
+    <div class="tbox" id="tbox"><canvas id="trace" aria-label="Trust of each beacon over the last 20 seconds"></canvas><div class="ttip" id="ttip" hidden></div></div>
+    <div class="note" id="n-ml"></div>
+    <details class="rules"><summary>How the score is computed, and what happens when a beacon dies</summary>
+<pre class="formula">every reading   raw   = tR · tJ · √tV       residual · jump · variance checks, each 0 to 1
+                trust = 0.55 · trust_prev + 0.45 · raw
+no reading      trust = trust_prev − 0.8 · dt  dt = 0.1 s, so −0.08 per missed reading
+position fix    weight_i = trust_i²         share_i = weight_i / Σ weight
+ML scorer       raw   = LightGBM probability that the reading is clean</pre>
+      <ul>
+        <li><b>The dead beacon:</b> its trust falls by 0.08 per missed reading, so it reaches 0 in about a second. One lost packet is normal, so it is not cut instantly. The reason changes from "Packet lost" to "No packets for 1 s".</li>
+        <li><b>The other beacons keep their trust</b>: each one is judged only on its own readings. What changes is their <b>share of the vote</b> (with 4 beacons, from about 25% each to about 33% each).</li>
+        <li><b>The cost shows in the uncertainty</b>: the ellipse grows, more when the lost beacon was the one closest to you. LOCUS has no single "overall trust"; the ellipse is the system-level measure.</li>
+      </ul>
+    </details>
+  </section>
+  </div>
 
   <aside class="panel">
     <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="beacons">Beacons</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
@@ -206,9 +252,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <label class="fld"><span>Noise level</span><span class="v" id="v-sig">4 dB</span><input type="range" id="i-sig" min="0" max="10" step="0.5" value="4"></label>
       <label class="fld">Packet loss <span class="v" id="v-loss">10%</span><input type="range" id="i-loss" min="0" max="60" step="1" value="10"></label>
       <div class="row"><label class="fld">RSSI @ 1 m (dBm)<input type="number" id="i-r1" value="-59" step="1"></label><label class="fld">Path-loss n<input type="number" id="i-pn" value="2.2" step="0.1" min="1.5" max="4"></label></div>
-      <h3>Trust scorer</h3>
-      <div class="seg" id="scorer" style="align-self:flex-start"><button data-sc="heuristic" aria-pressed="true">Heuristic</button><button data-sc="ml" aria-pressed="false">ML (LightGBM)</button></div>
-      <div class="note" id="n-ml"></div>
+      <div class="note">The trust scorer (Heuristic or ML) and the live trust of every beacon are under the 3D view.</div>
       <h3>Inject faults</h3>
       <div class="note">Tap an anchor in the view (or select it in the Space tab), then:</div>
       <div class="faults" id="faults"><button class="k" data-f="dead" aria-pressed="false">Kill anchor</button><button class="o" data-f="obstruct" aria-pressed="false">Block with body</button><button class="d" data-f="drift" aria-pressed="false">Drift / bias</button><button data-f="clear" aria-pressed="false">Clear all</button></div>

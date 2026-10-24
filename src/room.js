@@ -1,6 +1,8 @@
 /* ===== LOCUS Room Live - app: phone-driven truth -> simulated 3D radio -> LOCUS engine -> 3D view ===== */
 const $ = id => document.getElementById(id);
 const LS_KEY = 'locus.room.v1';
+const ACOL = ['#2A78D6', '#EB6834', '#1BAF7A', '#E0A000', '#8B5CF6', '#E0508C'], acol = a => ACOL[(a.b - 1) % 6];
+const TH = [], TMARK = [], SILENT = {};   /* trust trace: last 20 s of {t, v: {anchorId: trust}}; event marks (killed / revived / lost) */
 const COL = { truth: '#0B3A4A', locus: '#10B981', ls: '#F5A524', kf: '#8B5CF6', pt: '#22C3E6', dead: '#9AA9B0', obs: '#F5A524', drift: '#8B5CF6' };
 const S = {
   space: 'room', W: 5, H: 4, Z: 2.7, n: 5, zDev: 1.3, zKnow: true, zAssume: 1.3, partition: false,
@@ -49,7 +51,7 @@ function rebuild(keepAnchors) {
 function newEngine() {
   const sc = S.scorer === 'ml' ? trustPredict : null;
   eng = { loc: new Locus(S.anchors, { N: 400, sigma: engSigma(), rng: rngMake(11), inflate: 2.0, scorer: sc }), kf: new KalmanCV(), ls: S.pos.slice(), rng: rngMake(2026), t: 0 };
-  stats = { loc: [], ls: [], kf: [] }; logRows = [];
+  stats = { loc: [], ls: [], kf: [] }; logRows = []; TH.length = 0; TMARK.length = 0;
 }
 /* the filter's range-noise belief: dB shadowing is multiplicative in range (rel. error = sigma_dB*ln10/(10n)) */
 function engSigma() {
@@ -245,6 +247,10 @@ function tick() {
   const e = q => q && truth ? Math.hypot(q[0] - truth[0], q[1] - truth[1]) : null;
   if (p3 && S.zEst != null) p3 = [p3[0], p3[1], S.zEst, S.zStd]; else p3 = null;
   cur = { truth, meas, ls, kf, out, p3, e: { loc: out && e(out.pos), ls: e(ls), kf: e(kf) } };
+  if (out) { const w2 = out.trust.map((q, j) => out.usable[j] ? q * q : 0), sw = w2.reduce((p, q) => p + q, 0); cur.share = w2.map(v => sw > 0 ? v / sw : 0);
+    const v = {}; S.anchors.forEach((a, j) => { v[a.id] = out.trust[j];
+      const gone = /^No packets/.test(out.reasons[j] || ''); if (gone && !SILENT[a.id] && live) TMARK.push({ t: eng.t, txt: 'B' + a.b + ' lost', col: '#EF6A6A' }); SILENT[a.id] = gone; });
+    TH.push({ t: eng.t, v }); while (TH.length && eng.t - TH[0].t > 20.5) TH.shift(); while (TMARK.length && eng.t - TMARK[0].t > 20) TMARK.shift(); }
   ['loc', 'ls', 'kf'].forEach(k => { if (cur.e[k] != null) { stats[k].push(cur.e[k]); if (stats[k].length > 900) stats[k].shift(); } });
   if (out) { S.estTrail = (S.estTrail || []); S.estTrail.push(out.pos.slice()); if (S.estTrail.length > 80) S.estTrail.shift();
     if (!S.pp) S.pp = out.pos.slice(); const dm = Math.hypot(out.pos[0] - S.pp[0], out.pos[1] - S.pp[1]); if (dm > 0.4) { S.path += dm; S.pp = out.pos.slice(); } }
@@ -271,6 +277,69 @@ function line(a, b, col, w, dash) { g.beginPath(); g.moveTo(a[0], a[1]); g.lineT
 function dot(p, r, col, stroke) { g.beginPath(); g.arc(p[0], p[1], r, 0, 7); g.fillStyle = col; g.fill(); if (stroke) { g.lineWidth = 2; g.strokeStyle = stroke; g.stroke(); } }
 function poly(pts, fill, stroke, lw) { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw || 1; g.stroke(); } }
 const trustCol = t => t > 0.7 ? '#10B981' : t > 0.4 ? '#F5A524' : '#EF6A6A';
+
+/* ---------- trust scorer panel: per-beacon trust, share of the fix, 20 s trace ---------- */
+function setFault(a, f) {
+  const s = S[f], on = !s.has(a.id); on ? s.add(a.id) : s.delete(a.id);
+  const txt = { dead: on ? 'killed' : 'revived', obstruct: on ? 'blocked' : 'unblocked', drift: on ? 'drifting' : 'drift off' }[f];
+  TMARK.push({ t: eng.t, txt: 'B' + a.b + ' ' + txt, col: on ? (f === 'dead' ? '#EF6A6A' : f === 'obstruct' ? '#F5A524' : '#8B5CF6') : '#10B981' });
+  syncFaults(); renderAnchors(); updateTrust();
+}
+let TSIG = '', THOV = null;
+function buildTrust() {
+  TSIG = S.anchors.map(a => a.id).join() + S.mode; const live = S.mode === 'live';
+  $('tcards').innerHTML = S.anchors.map(a => `<div class="tc" data-id="${a.id}"><div class="top"><span class="sq" style="background:${acol(a)}"></span><b>Beacon ${a.b}</b><span class="st">live</span></div>
+    <div class="kv"><span>trust</span><b class="big tv">–</b></div><div class="mt"><i style="width:0;background:${acol(a)}"></i></div>
+    <div class="kv"><span>share of the fix</span><b class="sh">–</b></div><div class="kv"><span>range</span><b class="rg">–</b></div><div class="why">–</div><div class="acts"${live ? ' style="display:none"' : ''}><button data-f="dead" aria-pressed="false">Kill</button><button class="o" data-f="obstruct" aria-pressed="false">Block</button></div></div>`).join('');
+  $('tleg').innerHTML = S.anchors.map(a => `<span><i style="background:${acol(a)}"></i>Beacon ${a.b}</span>`).join('');
+  $('share').innerHTML = S.anchors.map(a => `<div style="background:${acol(a)};width:0"></div>`).join('');
+}
+function updateTrust() {
+  const c = cur; if (!c || c.meas.length !== S.anchors.length) return;   /* one frame after a layout change cur still has the old beacons */
+  if (TSIG !== S.anchors.map(a => a.id).join() + S.mode) buildTrust();
+  const o = c.out, live = S.mode === 'live', cards = $('tcards').children, bars = $('share').children, sh = c.share || S.anchors.map(() => 0);
+  S.anchors.forEach((a, i) => {
+    const el = cards[i], m = c.meas[i], q = o ? o.trust[i] : 0, why = o ? o.reasons[i] || '' : '', dead = !live && S.dead.has(a.id), blk = !live && S.obstruct.has(a.id), drf = !live && S.drift.has(a.id), silent = /^No packets/.test(why);
+    el.className = 'tc' + (dead ? ' dead' : blk ? ' blk' : drf ? ' drf' : '');
+    const st = el.querySelector('.st'); st.textContent = dead ? 'killed' : blk ? 'blocked' : drf ? 'drifting' : silent ? 'silent' : live ? 'real BLE' : 'live'; st.className = 'st' + (dead || silent ? ' dead' : blk ? ' blk' : drf ? ' drf' : live ? ' real' : '');
+    const bs = el.querySelectorAll('.acts button'); bs[0].setAttribute('aria-pressed', String(S.dead.has(a.id))); bs[0].textContent = S.dead.has(a.id) ? 'Revive' : 'Kill'; bs[1].setAttribute('aria-pressed', String(S.obstruct.has(a.id))); bs[1].textContent = S.obstruct.has(a.id) ? 'Unblock' : 'Block';
+    const tv = el.querySelector('.tv'); tv.textContent = o ? q.toFixed(2) : '–'; tv.style.color = o ? trustCol(q) : ''; el.querySelector('.mt i').style.width = (o ? q * 100 : 0).toFixed(1) + '%';
+    el.querySelector('.sh').textContent = Math.round(sh[i] * 100) + '%';
+    let rg = 'no packet'; if (m) { if (c.truth) { const d = Math.hypot(c.truth[0] - a.x, c.truth[1] - a.y, a.z - S.zDev), k = wallsBetween(a.x, a.y, c.truth[0], c.truth[1]); rg = m.r3.toFixed(1) + ' m · true ' + d.toFixed(1) + (k ? ' · ' + k + ' wall' + (k > 1 ? 's' : '') : ''); } else rg = m.r3.toFixed(1) + ' m · ' + m.rssi + ' dBm'; }
+    el.querySelector('.rg').textContent = rg; el.querySelector('.why').textContent = why || (o ? 'Consistent with motion model' : '–');
+    const bar = bars[i], p = sh[i] * 100; bar.style.width = p.toFixed(2) + '%'; bar.style.borderRightWidth = p > 0.4 ? '2px' : '0'; bar.textContent = p > 9 ? 'B' + a.b + ' ' + Math.round(p) + '%' : ''; bar.title = 'Beacon ' + a.b + ': ' + Math.round(p) + '% of the fix';
+  });
+  if (o) {
+    const use = o.usable.filter(Boolean).length, n = S.anchors.length, nd = live ? 0 : S.anchors.filter(a => S.dead.has(a.id)).length;
+    $('t-use').textContent = use + ' / ' + n; $('t-use2').textContent = nd ? nd + ' killed · ' + (n - nd - use) + ' packet lost' : (n - use) + ' packet' + (n - use === 1 ? '' : 's') + ' lost this reading';
+    const lo = S.anchors.map((a, i) => ({ a, q: o.trust[i], r: o.reasons[i] })).sort((x, y) => x.q - y.q)[0];
+    $('t-low').textContent = lo.q.toFixed(2); $('t-low').style.color = trustCol(lo.q); $('t-low2').textContent = 'Beacon ' + lo.a.b + (lo.q < 0.7 && lo.r ? ': ' + lo.r : ': healthy');
+    $('t-ell').textContent = '± ' + o.ell.a.toFixed(1) + ' m';
+    if (c.truth) { $('t-err').textContent = c.e.loc.toFixed(2) + ' m'; $('t-err2').textContent = 'trilateration ' + (c.e.ls == null ? 'no fix' : c.e.ls.toFixed(2) + ' m'); }
+    else { const k = stats.loc.length; $('t-err').textContent = k ? stats.loc[k - 1].toFixed(2) + ' m' : '–'; $('t-err2').textContent = k ? 'at your last tap' : 'tap the floor where you stand'; }
+  }
+  drawTrace();
+}
+function drawTrace() {
+  const box = $('tbox'), cvs = $('trace'), W = box.clientWidth, H = box.clientHeight, d = Math.min(2, devicePixelRatio || 1); if (!W || !H) return;
+  if (cvs.width !== Math.round(W * d) || cvs.height !== Math.round(H * d)) { cvs.width = Math.round(W * d); cvs.height = Math.round(H * d); }
+  const x = cvs.getContext('2d'), L = 38, R = 10, T = 12, B = 24, pw = W - L - R, ph = H - T - B, t1 = eng.t, t0 = t1 - 20, X = s => L + (s - t0) / 20 * pw, Y = v => T + (1 - v) * ph;
+  x.setTransform(d, 0, 0, d, 0, 0); x.clearRect(0, 0, W, H);
+  x.fillStyle = 'rgba(239,106,106,.06)'; x.fillRect(L, Y(0.4), pw, Y(0) - Y(0.4));   /* below 0.4: down-weighted */
+  x.font = '600 10.5px Figtree'; x.lineWidth = 1;
+  [0, 0.25, 0.5, 0.75, 1].forEach(v => { x.strokeStyle = '#E2F1F6'; x.beginPath(); x.moveTo(L, Y(v)); x.lineTo(W - R, Y(v)); x.stroke(); x.fillStyle = '#7A9AA6'; x.textAlign = 'right'; x.fillText(v.toFixed(2), L - 6, Y(v) + 3.5); });
+  x.textAlign = 'center'; [0, 5, 10, 15, 20].forEach(s => x.fillText(s === 20 ? 'now' : '−' + (20 - s) + ' s', X(t0 + s), H - 7));
+  TMARK.forEach((k, j) => { const px = X(k.t); if (px < L) return; x.strokeStyle = k.col; x.setLineDash([3, 3]); x.beginPath(); x.moveTo(px, T); x.lineTo(px, T + ph); x.stroke(); x.setLineDash([]); x.font = '700 10.5px Figtree'; x.textAlign = px > W - 90 ? 'right' : 'left'; const lx = px + (px > W - 90 ? -4 : 4), ly = Y(0.06) - (j % 3) * 12; x.lineJoin = 'round'; x.lineWidth = 3; x.strokeStyle = '#fff'; x.strokeText(k.txt, lx, ly); x.fillStyle = k.col; x.fillText(k.txt, lx, ly); x.lineWidth = 1; });
+  S.anchors.forEach(a => { x.strokeStyle = acol(a); x.lineWidth = 2; x.lineJoin = 'round'; x.beginPath(); let on = false; TH.forEach(h => { const v = h.v[a.id]; if (v == null) { on = false; return; } const px = X(h.t), py = Y(v); on ? x.lineTo(px, py) : x.moveTo(px, py); on = true; }); x.stroke(); });
+  const tip = $('ttip');
+  if (THOV != null && TH.length && THOV >= L && THOV <= W - R) {
+    const s = t0 + (THOV - L) / pw * 20; let best = TH[0]; for (const h of TH) if (Math.abs(h.t - s) < Math.abs(best.t - s)) best = h;
+    const px = X(best.t); x.strokeStyle = '#7A9AA6'; x.lineWidth = 1; x.beginPath(); x.moveTo(px, T); x.lineTo(px, T + ph); x.stroke();
+    S.anchors.forEach(a => { const v = best.v[a.id]; if (v != null) { x.beginPath(); x.arc(px, Y(v), 3.5, 0, 7); x.fillStyle = acol(a); x.fill(); } });
+    tip.hidden = false; tip.style.left = Math.min(W - 80, Math.max(80, px)) + 'px'; tip.style.top = T + 'px';
+    tip.innerHTML = (eng.t - best.t < 0.15 ? 'now' : '−' + (eng.t - best.t).toFixed(1) + ' s') + '<br>' + S.anchors.filter(a => best.v[a.id] != null).map(a => 'B' + a.b + ' ' + best.v[a.id].toFixed(2)).join(' · ');
+  } else tip.hidden = true;
+}
 
 function draw() {
   const w = cv.width / DPR, h = cv.height / DPR; g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, w, h); setupView();
@@ -313,12 +382,13 @@ function drawAnchor(a, i) {
   const m = cur && cur.meas[i], t = cur && cur.out ? cur.out.trust[i] : 0.8;
   if (S.view.tilt < 89) line(base, top, 'rgba(14,157,190,.35)', 1.5, [3, 3]); dot(base, 3, 'rgba(14,157,190,.35)');
   const ref = cur && (cur.truth || (cur.out && cur.out.pos));
-  if (ref && !dead && S.show.locus) { const p = P(ref[0], ref[1], S.zDev); g.save(); g.globalAlpha = m ? 0.8 : 0.18; line(top, p, m ? trustCol(t) : '#9AA9B0', m ? 1 + 2 * t : 1, m ? [] : [4, 5]); g.restore();
+  if (ref && !dead && S.show.locus) { const p = P(ref[0], ref[1], S.zDev); g.save(); g.globalAlpha = m ? 0.8 : 0.18; line(top, p, m ? trustCol(t) : '#9AA9B0', m ? 1 + 9 * (cur.share ? cur.share[i] : 0.25) : 1, m ? [] : [4, 5]); g.restore();
     if (S.view.tilt < 65 && m) { const dz = a.z - S.zDev, mid = [(top[0] + p[0]) / 2, (top[1] + p[1]) / 2]; g.fillStyle = '#0E9DBE'; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('Δz ' + (dz >= 0 ? '+' : '') + dz.toFixed(1) + ' m', mid[0], mid[1] - 4); } }
   if (i === S.sel) { g.beginPath(); g.arc(top[0], top[1], 15, 0, 7); g.strokeStyle = '#10B981'; g.lineWidth = 2; g.stroke(); }
   poly([[top[0], top[1] - 9], [top[0] + 8, top[1] - 4.5], [top[0] + 8, top[1] + 4.5], [top[0], top[1] + 9], [top[0] - 8, top[1] + 4.5], [top[0] - 8, top[1] - 4.5]], col, '#fff', 2);
   g.fillStyle = '#fff'; g.font = '700 9px Figtree'; g.textAlign = 'center'; g.fillText(a.id.replace('A', ''), top[0], top[1] + 3.2);
   g.fillStyle = col; g.font = '700 10.5px Figtree'; g.fillText((a.z).toFixed(1) + ' m', top[0], top[1] - 14);
+  if (cur && cur.out && cur.share && cur.share.length === S.anchors.length) { const lb = dead ? 'no packets' : t.toFixed(2) + ' · ' + Math.round(cur.share[i] * 100) + '%'; g.font = '700 10px Figtree'; g.textAlign = 'center'; g.lineJoin = 'round'; g.lineWidth = 3.5; g.strokeStyle = 'rgba(255,255,255,.92)'; g.strokeText(lb, top[0], top[1] + 22); g.fillStyle = dead ? '#C44' : '#0B3A4A'; g.fillText(lb, top[0], top[1] + 22); }
   hit.push({ i, x: top[0], y: top[1] });
 }
 function drawPhone() {
@@ -384,7 +454,9 @@ function bindUI() {
   $('i-loss').oninput = e => { S.loss = +e.target.value / 100; $('v-loss').textContent = e.target.value + '%'; save(); };
   $('i-r1').onchange = e => { S.rssi1m = +e.target.value; save(); }; $('i-pn').onchange = e => { S.pn = +e.target.value; save(); };
   document.querySelectorAll('#scorer button').forEach(b => b.onclick = () => { S.scorer = b.dataset.sc; setSeg('scorer', 'sc', S.scorer); newEngine(); spaceNote(); });
-  document.querySelectorAll('#faults button').forEach(b => b.onclick = () => { const a = S.anchors[S.sel]; if (!a) return; const f = b.dataset.f; if (f === 'clear') { S.dead.clear(); S.obstruct.clear(); S.drift.clear(); } else { const s = S[f]; s.has(a.id) ? s.delete(a.id) : s.add(a.id); } syncFaults(); renderAnchors(); });
+  document.querySelectorAll('#faults button').forEach(b => b.onclick = () => { const a = S.anchors[S.sel]; if (!a) return; const f = b.dataset.f; if (f === 'clear') { if (S.dead.size || S.obstruct.size || S.drift.size) TMARK.push({ t: eng.t, txt: 'faults cleared', col: '#10B981' }); S.dead.clear(); S.obstruct.clear(); S.drift.clear(); syncFaults(); renderAnchors(); } else setFault(a, f); });
+  $('tcards').onclick = e => { const b = e.target.closest('button[data-f]'), el = b && b.closest('.tc'); if (!el) return; const a = S.anchors.find(q => q.id === el.dataset.id); if (a) setFault(a, b.dataset.f); };
+  const tbx = $('tbox'); tbx.onpointermove = e => { THOV = e.clientX - tbx.getBoundingClientRect().left; drawTrace(); }; tbx.onpointerleave = () => { THOV = null; drawTrace(); };
   $('b-clear').onclick = () => { stats = { loc: [], ls: [], kf: [] }; logRows = []; };
   $('b-csv').onclick = () => { const head = ['t_s', 'truth_x', 'truth_y', 'truth_z', 'locus_x', 'locus_y', 'locus_z_est', 'trilat_x', 'trilat_y', 'err_locus', 'err_trilat', 'err_kalman'].concat(S.anchors.map(a => 'rssi_' + a.id), S.anchors.map(a => 'trust_' + a.id)).join(','); const blob = new Blob([head + '\n' + logRows.map(r => r.join(',')).join('\n')], { type: 'text/csv' }), a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'locus-room-session.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
   /* canvas: orbit (drag), zoom (wheel/pinch), tap floor to walk, drag anchors */
@@ -430,7 +502,7 @@ function updateReport() {
   $('tb').innerHTML = S.anchors.map((a, i) => { const m = c.meas[i], t = c.out ? c.out.trust[i] : 0; return `<tr><td><b>${a.id}</b></td><td>${S.dead.has(a.id) && S.mode === 'demo' ? 'off' : m ? m.rssi + ' dBm' : 'lost'}</td><td>${m ? m.r3.toFixed(1) + ' m' : '–'}</td><td><div class="tb"><i style="width:${Math.round(t * 100)}%;background:${trustCol(t)}"></i></div></td></tr>`; }).join('');
   const bad = c.out && S.anchors.map((a, i) => ({ a, t: c.out.trust[i], r: c.out.reasons[i] })).filter(x => x.t < 0.7 && x.r).sort((a, b) => a.t - b.t)[0]; $('n-reason').innerHTML = bad ? '<b>' + bad.a.id + ':</b> ' + bad.r : 'All readings look consistent.';
   const nh = c.meas.filter(Boolean).length; $('p-mode').className = 'pill ' + (nh >= 3 ? 'ok' : nh >= 1 ? 'warn' : 'bad'); $('p-mode').lastElementChild.textContent = S.mode === 'live' ? (S.link ? 'Real BLE · ' + nh + ' beacons heard' : 'No link to receiver') : 'Simulated radio · ' + nh + ' anchors heard'; if (S.mode === 'live') { $('p-mode').className = 'pill ' + (S.link && nh >= 3 ? 'ok' : S.link ? 'warn' : 'bad'); srcPill(); }
-  updateBeacons();
+  updateBeacons(); updateTrust();
   const sp = $('spark'), sg = sp.getContext('2d'), W = sp.clientWidth, Hh = sp.clientHeight; if (sp.width !== W * 2) { sp.width = W * 2; sp.height = Hh * 2; } sg.setTransform(2, 0, 0, 2, 0, 0); sg.clearRect(0, 0, W, Hh);
   const mx = Math.max(1, ...stats.loc.slice(-300), ...stats.ls.slice(-300)); [['ls', COL.ls], ['loc', COL.locus]].forEach(([k, col]) => { const a = stats[k].slice(-300); if (a.length < 2) return; sg.beginPath(); a.forEach((v, i) => { const x = i / 299 * W, y = Hh - 6 - v / mx * (Hh - 14); i ? sg.lineTo(x, y) : sg.moveTo(x, y); }); sg.strokeStyle = col; sg.lineWidth = 2; sg.stroke(); });
   sg.fillStyle = '#7A9AA6'; sg.font = '600 10px Figtree'; sg.fillText('error (m) · green LOCUS · amber trilateration · max ' + mx.toFixed(1), 6, 11);
@@ -532,6 +604,6 @@ function init() {
   if (!/join=/.test(location.hash)) setTimeout(() => Sync.share(), 700);
   const jm = /join=(\d{4})/.exec(location.hash); if (jm) setTimeout(() => Sync.join(jm[1]), 400);
   requestAnimationFrame(loop);
-  window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, setSource, setMode, rebuild, layout, health, measureBeacon, calibrate, logTap, liveMeas };
+  window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, setSource, setMode, rebuild, layout, health, measureBeacon, calibrate, logTap, liveMeas, setFault, updateTrust, get TH() { return TH; }, get TMARK() { return TMARK; } };
 }
 init();

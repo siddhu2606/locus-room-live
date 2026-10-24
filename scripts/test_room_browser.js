@@ -16,6 +16,14 @@ const mock = http.createServer((q, r) => { const since = +(new URL(q.url, 'http:
   await b.sleep(4000);
   ok(await b.ev(`document.querySelector('#bt tr .c-r').textContent.includes('dBm') && parseFloat(document.querySelector('#bt tr .tb i').style.width) > 0`), 'table shows RSSI, range and trust');
   ok(await b.ev(`[...document.querySelectorAll('#bt tr')].slice(0,4).every(tr => tr.querySelector('.hd.ok, .hd.warn'))`), 'health dots for active beacons');
+  ok(await b.ev(`document.querySelectorAll('#tcards .tc').length === 4 && Math.abs(__locus.cur.share.reduce((a, c) => a + c, 0) - 1) < 1e-6 && /^0\\.\\d\\d$/.test(document.querySelector('#tcards .tv').textContent)`), 'trust scorer: 4 cards, shares sum to 100%');
+  const sh0 = await b.ev(`__locus.cur.share.slice(1).reduce((a, c) => a + c, 0)`);
+  await b.ev(`document.querySelector('#tcards .tc [data-f=dead]').click()`); await b.sleep(2500);
+  ok(await b.ev(`__locus.cur.out.trust[0] < 0.05 && __locus.cur.share[0] === 0 && document.querySelector('#tcards .tc').classList.contains('dead') && /No packets/.test(document.querySelector('#tcards .why').textContent)`), 'kill from a trust card: trust falls to 0, reason "No packets"');
+  ok(await b.ev(`__locus.cur.share.slice(1).reduce((a, c) => a + c, 0)`) > 0.999 && sh0 < 0.999, 'survivors take over the dead beacon share of the fix');
+  ok(await b.ev(`__locus.TMARK.some(m => m.txt === 'B1 killed') && __locus.TH.length > 50`), 'trust trace marks the kill: ' + await b.ev(`JSON.stringify(__locus.TMARK) + ' ' + __locus.TH.length`));
+  await b.ev(`document.querySelector('#tcards .tc [data-f=dead]').click()`); await b.sleep(2500);
+  ok(await b.ev(`__locus.cur.out.trust[0] > 0.4 && document.querySelector('#tcards .tc [data-f=dead]').textContent === 'Kill'`), 'revive: trust recovers');
   await b.ev(`document.querySelectorAll('#bt input[type=checkbox]')[3].click()`); await b.sleep(400);
   ok(await b.ev(`__locus.S.anchors.length === 3 && __locus.S.anchors.every(a => a.b !== 4)`), 'unticking beacon 4 drops it from the engine');
   await b.ev(`document.querySelectorAll('#bt input[type=checkbox]')[3].click()`);
