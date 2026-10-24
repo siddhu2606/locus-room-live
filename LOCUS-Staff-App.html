@@ -203,12 +203,12 @@ class KalmanCV {
 
 /* wall-count lookup per anchor (0.5 m grid) so the filter can predict wall bias for any particle */
 const KCACHE = {};
-function kGrid(a) {
-  const key = SITE_ID + a.id + ':' + a.x + ',' + a.y; if (KCACHE[key]) return KCACHE[key];
+function kGridCompute(a) {
   const W = FLOOR.w * 2, H = FLOOR.h * 2, g = new Uint8Array(W * H);
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) g[j * W + i] = wallsBetween(a.x, a.y, (i + 0.5) / 2, (j + 0.5) / 2);
-  return KCACHE[key] = g;
+  return g;
 }
+function kGrid(a) { const key = SITE_ID + a.id + ':' + a.x + ',' + a.y; return KCACHE[key] || (KCACHE[key] = kGridCompute(a)); }
 function kAt(g, x, y) { const i = Math.min(FLOOR.w * 2 - 1, Math.max(0, x * 2 | 0)), j = Math.min(FLOOR.h * 2 - 1, Math.max(0, y * 2 | 0)); return g[j * FLOOR.w * 2 + i]; }
 
 /* LOCUS: trust scorer + weighted robust fix + map-aware particle filter */
@@ -219,6 +219,12 @@ class Locus {
     this.px = new Float64Array(this.N); this.py = new Float64Array(this.N); this.vx = new Float64Array(this.N); this.vy = new Float64Array(this.N); this.w = new Float64Array(this.N).fill(1 / this.N);
     this.inited = false; this.trust = anchors.map(() => 0.8); this.last = anchors.map(() => null); this.silent = anchors.map(() => 0); this.hist = anchors.map(() => []);
     this.est = null; this.fix = null; this.scorer = opts.scorer || null;
+  }
+  /* moving anchors: the believed position (and its uncertainty sd, m) is used from the next reading on.
+     A jump of more than 0.5 m (drag / teleport) resets that anchor's jump + variance history so the move is not scored as a bad reading. */
+  moveAnchor(i, x, y, sd) {
+    const a = this.anchors[i], far = Math.hypot(x - a.x, y - a.y) > 0.5; if (sd != null) a.sd = sd; if (x === a.x && y === a.y) return;
+    a.x = x; a.y = y; this.kg[i] = kGridCompute(a); if (far) { this.last[i] = null; this.hist[i] = []; }
   }
   _init(meas) {
     const c = [FLOOR.w / 2, FLOOR.h / 2], f = lsFix(this.anchors, meas, c) || c, r = this.rng;
@@ -251,7 +257,7 @@ class Locus {
     if (this.scorer) {
       const fs = A.map((a, i) => {
         const m = meas[i]; if (!m) return null;
-        const kp = kAt(this.kg[i], prior[0], prior[1]), pred = Math.hypot(prior[0] - a.x, prior[1] - a.y) + kp * this.wallMu, res = m.r - pred, s = Math.sqrt(sg * sg + priorStd * priorStd + Math.pow(kp * 0.8, 2));
+        const kp = kAt(this.kg[i], prior[0], prior[1]), pred = Math.hypot(prior[0] - a.x, prior[1] - a.y) + kp * this.wallMu, res = m.r - pred, s = Math.sqrt(sg * sg + priorStd * priorStd + Math.pow(kp * 0.8, 2) + (a.sd || 0) * (a.sd || 0));
         const h = this.hist[i].concat([m.r]).slice(-8), jump = this.last[i] == null ? 0 : Math.abs(m.r - this.last[i]); let vr = 0;
         if (h.length > 3) { const mu = h.reduce((p, c) => p + c, 0) / h.length; vr = Math.sqrt(h.reduce((p, c) => p + (c - mu) * (c - mu), 0) / h.length); }
         return { res, s, jump, vr, kp, pred, r: m.r };
@@ -267,7 +273,7 @@ class Locus {
       const m = meas[i];
       if (!m) { this.silent[i] += dt; this.trust[i] = Math.max(0, this.trust[i] - dt * 0.8); reasons[i] = this.silent[i] > 1 ? 'No packets for ' + this.silent[i].toFixed(0) + ' s' : 'Packet lost'; usable[i] = false; return; }
       this.silent[i] = 0;
-      const kp = kAt(this.kg[i], prior[0], prior[1]), pred = Math.hypot(prior[0] - a.x, prior[1] - a.y) + kp * this.wallMu, res = m.r - pred, s = Math.sqrt(sg * sg + priorStd * priorStd + Math.pow(kp * 0.8, 2));
+      const kp = kAt(this.kg[i], prior[0], prior[1]), pred = Math.hypot(prior[0] - a.x, prior[1] - a.y) + kp * this.wallMu, res = m.r - pred, s = Math.sqrt(sg * sg + priorStd * priorStd + Math.pow(kp * 0.8, 2) + (a.sd || 0) * (a.sd || 0));
       const tol = res > 0 ? 2.0 * s : 3.2 * s, zr = Math.abs(res) / tol, tR = 1 / (1 + Math.pow(zr, 3));
       const h = this.hist[i]; h.push(m.r); if (h.length > 8) h.shift();
       const jump = this.last[i] == null ? 0 : Math.abs(m.r - this.last[i]), jx = Math.max(0, jump - 0.25 - 3 * sg), tJ = 1 / (1 + Math.pow(jx / (3 * sg), 2));
@@ -289,7 +295,7 @@ class Locus {
     let sw = 0; const eps = 0.04;
     for (let p = 0; p < N; p++) {
       let lw = Math.log(this.w[p] + 1e-300);
-      for (let i = 0; i < A.length; i++) { const m = meas[i]; if (!m || !usable[i]) continue; const t = relocal ? Math.max(this.trust[i], 0.45) : this.trust[i]; if (t < 0.08) continue; const kk = kAt(this.kg[i], this.px[p], this.py[p]), si = Math.sqrt(sg * sg / t + Math.pow(kk * 0.8, 2)) + 0.15, d = Math.hypot(this.px[p] - A[i].x, this.py[p] - A[i].y) + kk * this.wallMu, z = (m.r - d) / si; lw += Math.log((1 - eps) * Math.exp(-0.5 * z * z) / si + eps / 25); }
+      for (let i = 0; i < A.length; i++) { const m = meas[i]; if (!m || !usable[i]) continue; const t = relocal ? Math.max(this.trust[i], 0.45) : this.trust[i]; if (t < 0.08) continue; const kk = kAt(this.kg[i], this.px[p], this.py[p]), si = Math.sqrt(sg * sg / t + Math.pow(kk * 0.8, 2) + (A[i].sd || 0) * (A[i].sd || 0)) + 0.15, d = Math.hypot(this.px[p] - A[i].x, this.py[p] - A[i].y) + kk * this.wallMu, z = (m.r - d) / si; lw += Math.log((1 - eps) * Math.exp(-0.5 * z * z) / si + eps / 25); }
       this.w[p] = Math.exp(lw); sw += this.w[p];
     }
     if (!(sw > 0)) { this.w.fill(1 / N); sw = 1; }

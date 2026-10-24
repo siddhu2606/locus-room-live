@@ -19,3 +19,8 @@ print('built room.html', len(t) // 1024, 'KB')
 t = r('src/phone.template.html').replace('/*__ENGINE__*/', eng).replace('/*__CORE__*/', r('src/room_core.js')).replace('/*__APP__*/', r('src/phone.js'))
 open('phone.html', 'w', encoding='utf8').write(t)
 print('built phone.html', len(t) // 1024, 'KB')
+
+mv = ''.join(r('src/moving/' + f + '.js') for f in ['config', 'motion', 'sim', 'estimator', 'compare'])
+t = r('src/moving.template.html').replace('/*__ENGINE__*/', eng).replace('/*__MOVING__*/', mv).replace('/*__APP__*/', r('src/moving/dashboard.js'))
+open('moving.html', 'w', encoding='utf8').write(t)
+print('built moving.html', len(t) // 1024, 'KB')
