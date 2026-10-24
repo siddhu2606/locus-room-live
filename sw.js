@@ -2,7 +2,7 @@
    - HTML: network-first (so a rebuilt page is picked up), cached copy when offline
    - icons / manifests / fonts: cache-first, refreshed in the background
    - never touches /api/*, /ws or non-GET requests, so the live backend link and BLE ingest are unaffected */
-const CACHE = 'locus-shell-v3';
+const CACHE = 'locus-shell-v4';
 const SHELL = ['./', './index.html', './room.html', './phone.html', './manifest-phone.json', './manifest-room.json', './LOCUS-Dashboard.html', './LOCUS-Staff-App.html', './manifest-dashboard.json', './manifest-staff.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon.png'];
 
@@ -16,7 +16,7 @@ self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET' || (url.origin === location.origin && /\/(api|ws)(\/|$)/.test(url.pathname))) return;
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then(r => { if (r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(r => { if (r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })
       .catch(() => caches.match(req).then(m => m || caches.match(/staff/i.test(url.pathname) ? './LOCUS-Staff-App.html' : './LOCUS-Dashboard.html'))));
     return;
   }
