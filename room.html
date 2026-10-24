@@ -39,7 +39,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(244,252,254,.86);backdro
 .pill.ok i{background:var(--em);box-shadow:0 0 0 3px rgba(16,185,129,.2)}.pill.warn i{background:var(--amber)}.pill.bad i{background:var(--coral)}
 a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .layout{display:grid;gap:14px;padding:14px 16px 28px;max-width:1500px;margin:0 auto;grid-template-columns:1fr}
-@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 410px;align-items:start}.stage{position:sticky;top:70px}}
+@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 440px;align-items:start}.stage{position:sticky;top:70px}}
 .stage{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
 #cv{display:block;width:100%;height:min(62vh,640px);min-height:340px;touch-action:none;cursor:grab;background:linear-gradient(180deg,#F7FDFF,#EAF8FC)}
 #cv.drag{cursor:grabbing}
@@ -58,7 +58,7 @@ a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .legend label input{display:none}
 @media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
 .pair{position:absolute;right:12px;bottom:70px;background:rgba(255,255,255,.96);border:1.5px solid var(--aqua-l);border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 8px 22px rgba(11,58,74,.12);width:150px;z-index:5}.pair .pt{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px}.pair svg{width:100%;height:auto;display:block}.pair .pc{font:700 22px Sora;letter-spacing:.2em;color:var(--ink)}.pair .pu{font-size:9.5px;color:var(--ink3);word-break:break-all;margin-top:2px}.pair.on{width:auto;padding:7px 12px;background:var(--em-l);border-color:var(--em)}.pair.on #pq,.pair.on .pc,.pair.on .pu{display:none}.pair.on .pt{color:var(--em-dd);margin:0}
-@media(max-width:700px){.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
+@media(max-width:700px){.hud{position:static;padding:10px 12px}.bt input[type=number]{width:42px}.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
 .joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
 .joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
@@ -103,12 +103,26 @@ td{padding:7px 4px;border-bottom:1px solid #EAF6FA;vertical-align:middle}
 #spark{width:100%;height:96px;display:block;border-radius:12px;background:#F7FDFF;border:1px solid var(--line)}
 code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
 .url{display:flex;gap:6px}.url input{flex:1;height:36px;border:1.5px solid var(--aqua-l);border-radius:10px;padding:0 10px;font-size:12.5px}
+.card{border:1.5px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.card h4{font:700 12px Sora;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.btn.opt[aria-pressed=true]{background:var(--em);border-color:var(--em);color:#fff}
+.lay{gap:6px}.lay button{height:32px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}.lay button.on{background:var(--em);border-color:var(--em);color:#fff}
+.tw{overflow-x:auto;margin:0 -4px}
+.bt th{text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;white-space:nowrap}.bt td{padding:5px 3px;white-space:nowrap}
+.bt input[type=number]{width:50px;height:28px;border:1.5px solid var(--aqua-l);border-radius:8px;padding:0 5px;font-size:12.5px;font-weight:600;background:#fff}
+.bt input[type=checkbox]{width:16px;height:16px;accent-color:var(--em)}
+.bt tr.off td:not(:nth-child(2)){opacity:.45}
+.bt .cal{height:26px;padding:0 9px;border-radius:99px;border:1.5px solid var(--aqua-l);font-size:12px;font-weight:700;background:#fff}.bt .cal.set{border-color:var(--em);color:var(--em-dd)}
+.hd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ink3);margin-left:5px;vertical-align:middle}.hd.ok{background:var(--em)}.hd.warn{background:var(--amber)}.hd.bad{background:var(--coral)}
+.warnbox{border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
+.gcal{border:1.5px dashed var(--aqua);border-radius:12px;padding:10px;display:none;flex-direction:column;gap:6px}.gcal .prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.gcal .prog i{display:block;height:100%;width:0;background:var(--grad)}
+.lnk{color:var(--aqua-d);font-weight:700;text-decoration:underline;padding:0}
 </style>
 </head>
 <body>
 <header><div class="hrow">
   <div class="logo"><svg width="26" height="26" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22C3E6"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs><path d="M16 2c-5.5 0-10 4.4-10 9.8C6 19 16 30 16 30s10-11 10-18.2C26 6.4 21.500 2 16 2z" fill="url(#lg)"/><circle cx="16" cy="12" r="4" fill="#fff"/></svg>LOCUS <small>Room Live</small></div>
-  <div class="hl"><span class="pill" id="p-src"><i></i><span>Demo walker</span></span><span class="pill" id="p-mode"><i></i><span>Simulated radio</span></span>
+  <div class="hl"><span class="pill" id="p-src"><i></i><span>Demo · auto loop</span></span><span class="pill" id="p-mode"><i></i><span>Simulated radio</span></span>
     <a class="pill" href="LOCUS-Dashboard.html">Dashboard</a><a class="pill" href="LOCUS-Staff-App.html">Staff app</a></div>
 </div></header>
 
@@ -138,36 +152,31 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
   </section>
 
   <aside class="panel">
-    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="track">Track</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="beacons">Beacons</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
 
-    <div class="pane on" id="t-track">
-      <h3>How is the dot moved?</h3>
-      <div class="src" id="srcs">
-        <button data-s="demo" aria-pressed="true"><b>Demo walker</b><span>Auto-walks a loop. No sensors needed.</span></button>
-        <button data-s="touch" aria-pressed="false"><b>Tap / keys</b><span>Tap the floor to walk there. WASD / arrows / joystick.</span></button>
-        <button data-s="phone" aria-pressed="false"><b>Phone motion</b><span>Walk with your phone: steps + compass move the dot.</span></button>
-        <button data-s="gps" aria-pressed="false"><b>GPS</b><span>Big rooms / outdoors. Weak indoors.</span></button>
+    <div class="pane on" id="t-beacons">
+      <div class="card">
+        <h4>Source</h4>
+        <div class="row"><button class="btn sm opt" id="b-demo" aria-pressed="true">Demo (simulated receiver)</button><button class="btn sm opt" id="b-live" aria-pressed="false">Receiver phone</button></div>
+        <div id="o-demo" class="row"><span class="note">Walker</span><div class="seg" id="walk"><button data-w="demo" aria-pressed="true">Auto loop</button><button data-w="touch" aria-pressed="false">Tap / keys</button></div></div>
+        <div id="o-live" style="display:none;flex-direction:column;gap:8px">
+          <div class="url"><input id="i-host" placeholder="phone IP e.g. 192.168.43.1:8080" autocomplete="off" spellcheck="false"><button class="btn pri sm" id="b-conn">Connect</button></div>
+          <div class="note" id="n-live">Open the <b>LOCUS Beacon</b> app on the receiver phone, tap Receiver. It shows the address. This page works with no internet: the phone serves it.</div>
+          <div class="note warn" id="n-https" style="display:none">This page is on <b>https</b>, and browsers block plain-http requests to a phone. <button class="lnk" id="b-offline">Download this page</button>, open the file on the laptop (works offline), then connect.</div>
+          <div class="note">No ground truth with real radio: <b>tap the floor where you really stand</b> to log an error sample.</div>
+        </div>
       </div>
-      <div id="o-phone" hidden style="display:none;flex-direction:column;gap:12px">
-        <div class="row"><button class="btn pri" id="b-sens">Enable phone sensors</button><button class="btn sm" id="b-align">Face the top wall → Align</button><button class="btn sm" id="b-step">+1 step</button><button class="btn sm" id="b-hold" style="touch-action:none">Hold to walk</button></div>
-        <div class="note" id="n-sens">Hold the phone flat in front of you (screen up) or upright, then walk. Press <b>Align</b> while facing the <b>top wall</b> of the map so compass heading matches the room.</div>
-        <div class="row"><label class="fld">Your height (cm)<input type="number" id="i-hgt" value="170" min="120" max="220"></label><label class="fld">Step length (m)<input type="number" id="i-step" step="0.01" value="0.70" min="0.3" max="1.2"></label><label class="fld">Walk scale ×<input type="number" id="i-scale" step="0.5" value="1" min="0.5" max="20"></label></div>
-        <label class="fld">Step sensitivity <span class="v" id="v-sens">×1.0</span><input type="range" id="i-sens" min="0.4" max="3" step="0.1" value="1"></label>
-        <label class="fld">Heading fine-tune <span class="v" id="v-off">0°</span><input type="range" id="i-off" min="-180" max="180" value="0"></label>
-        <div class="note" id="n-ph">Steps 0 · heading –</div>
+      <div class="card">
+        <h4>Room and beacons</h4>
+        <div class="row"><label class="fld">Width m<input type="number" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth m<input type="number" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
+        <div class="row lay" id="lays"><button data-lay="2">2 · pair</button><button data-lay="3">3 · triangle</button><button data-lay="4">4 · square</button><button data-lay="6">6 · ring</button></div>
+        <div id="warn" class="warnbox ok" style="display:none"></div>
+        <div class="tw"><table class="bt"><thead><tr><th>#</th><th>On</th><th>x</th><th>y</th><th>RSSI</th><th>Range</th><th>Trust</th><th>1 m</th></tr></thead><tbody id="bt"></tbody></table></div>
+        <div class="row"><button class="btn pri sm" id="b-gcal">Guided calibration</button><span class="note" id="n-cal">Walks you through each beacon, one at a time.</span></div>
+        <div class="gcal" id="gcal"><b id="g-title"></b><div class="note" id="g-text"></div><div class="prog"><i id="g-bar"></i></div><div class="row"><button class="btn pri sm" id="g-go">Measure (3 s)</button><button class="btn sm" id="g-skip">Skip</button><button class="btn sm" id="g-stop">Stop</button></div></div>
+        <div class="note" id="n-why">Beacon # is the ID you pick in the app on each beacon phone. Untick one to test losing a beacon.</div>
       </div>
-      <div id="o-gps" style="display:none;flex-direction:column;gap:10px">
-        <div class="row"><button class="btn pri" id="b-gps">Start GPS</button><button class="btn sm" id="b-gps0">Set origin here</button></div>
-        <div class="note warn">GPS is metres-accurate at best and usually fails indoors. Use it outdoors or in a hall; otherwise use Phone motion.</div>
-        <div class="note" id="n-gps">GPS off.</div>
-      </div>
-      <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
-      <h3>Sync phone ↔ laptop</h3>
-      <div class="note">Phone page: <b>phone.html</b> (scan the QR in the corner of the view). Walk with the phone, watch the big 3D view here. Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
-      <div class="row"><button class="btn pri sm" id="b-share">Share this session</button><label class="fld" style="max-width:120px;min-width:100px"><input id="i-code" placeholder="code" inputmode="numeric" maxlength="4"></label><button class="btn sm" id="b-join">Join</button><button class="btn sm" id="b-leave" disabled>Leave</button></div>
-      <div id="o-share" style="display:none;flex-direction:column;gap:8px;align-items:flex-start"><div class="note" id="n-share"></div><div id="qr" style="background:#fff;padding:6px;border:1px solid var(--line);border-radius:12px"></div><div class="url" style="width:100%"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div></div>
-      <div class="note" id="n-sync">Not connected.</div>
-      <div class="note">Phone sensors need HTTPS (this GitHub Pages link is). Same Wi-Fi is the most reliable; across different networks the link may fail (no relay server).</div>
+      <div class="row"><button class="btn sm" id="b-trail">Trail: on</button><button class="btn sm" id="b-reset">Clear trail</button><span class="note" id="n-path">Path: 0.0 m</span></div>
     </div>
 
     <div class="pane" id="t-space">
@@ -175,18 +184,16 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <div class="seg" id="spaces" style="align-self:flex-start"><button data-sp="room" aria-pressed="true">My room</button><button data-sp="hospital" aria-pressed="false">Hospital (trained map)</button></div>
       <div class="note" id="n-space"></div>
       <div id="o-room" style="display:flex;flex-direction:column;gap:12px">
-        <div class="row"><label class="fld">Width (m) <span class="v" id="v-W">5.0</span><input type="range" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth (m) <span class="v" id="v-H">4.0</span><input type="range" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
         <label class="fld">Ceiling height (m) <span class="v" id="v-Z">2.7</span><input type="range" id="i-Z" min="2" max="8" step="0.1" value="2.7"></label>
         <div class="sw">Partition wall with door (NLOS test)<button class="tg" id="g-part" aria-pressed="false" aria-label="Partition"></button></div>
       </div>
-      <label class="fld">Anchors <span class="v" id="v-n">5</span><input type="range" id="i-n" min="2" max="6" step="1" value="5"></label>
       <h3>Phone height</h3>
       <label class="fld">Held at <span class="v" id="v-zd">1.30 m</span><input type="range" id="i-zd" min="0" max="2.6" step="0.05" value="1.3"></label>
       <div class="row"><div class="seg" id="zpre"><button data-z="0.05">Floor</button><button data-z="0.9">Pocket</button><button data-z="1.3">Hand</button><button data-z="2.0">Overhead</button></div></div>
       <div class="sw">System knows the height<button class="tg" id="g-zknow" aria-pressed="true" aria-label="Height known"></button></div>
       <label class="fld" id="f-zas" style="display:none">Height the system assumes <span class="v" id="v-za">1.30 m</span><input type="range" id="i-za" min="0" max="2.6" step="0.05" value="1.3"></label>
       <div class="note">The engine solves position on the floor plane, so it converts every 3D range to a horizontal one using the height difference. If the assumed height is wrong the error grows — turn <b>System knows the height</b> off to see it. With ≥4 anchors at different heights LOCUS also <b>estimates your height</b> (shown top-left of the view).</div>
-      <h3>Anchors <span class="note">(tap to select · drag in Top/Angled view to move)</span></h3>
+      <h3>Anchor heights <span class="note">(active beacons · tap to select · drag in Top/Angled view to move)</span></h3>
       <div id="anchors" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
@@ -200,7 +207,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <div class="seg" id="scorer" style="align-self:flex-start"><button data-sc="heuristic" aria-pressed="true">Heuristic</button><button data-sc="ml" aria-pressed="false">ML (LightGBM)</button></div>
       <div class="note" id="n-ml"></div>
       <h3>Inject faults</h3>
-      <div class="note">Select an anchor in the Space tab or tap one in the view, then:</div>
+      <div class="note">Tap an anchor in the view (or select it in the Space tab), then:</div>
       <div class="faults" id="faults"><button class="k" data-f="dead" aria-pressed="false">Kill anchor</button><button class="o" data-f="obstruct" aria-pressed="false">Block with body</button><button class="d" data-f="drift" aria-pressed="false">Drift / bias</button><button data-f="clear" aria-pressed="false">Clear all</button></div>
     </div>
 
@@ -211,7 +218,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <table><thead><tr><th>Anchor</th><th>RSSI</th><th>Range</th><th>Trust</th></tr></thead><tbody id="tb"></tbody></table>
       <div class="note" id="n-reason"></div>
       <div class="row"><button class="btn pri sm" id="b-csv">Download session CSV</button><button class="btn sm" id="b-clear">Clear stats</button></div>
-      <div class="note warn"><b>What is real and what is not.</b> The motion of the dot is real (your phone's step counter and compass). The radio signal is <b>synthetic</b>: LOCUS computes the RSSI the anchors <i>would</i> hear from the phone's true position, adds noise, and the engine localises from that. "Truth" is dead-reckoned from the phone, so it drifts over minutes; use short walks, press Align often. Real BLE hardware is the Staff app's Live BLE tab.</div>
+      <div class="note warn"><b>What is real and what is not.</b> In <b>Demo</b> the radio is <b>synthetic</b>: LOCUS computes the RSSI each anchor <i>would</i> hear from the walker (or your synced phone's dead-reckoned position), adds noise, and the engine localises from that. In <b>Receiver phone</b> mode the RSSI is <b>real Bluetooth</b> from the LOCUS Beacon app; there is no ground truth, so tap the floor where you really stand to log error samples.</div>
     </div>
   </aside>
 </div>
@@ -593,38 +600,47 @@ const LS_KEY = 'locus.room.v1';
 const COL = { truth: '#0B3A4A', locus: '#10B981', ls: '#F5A524', kf: '#8B5CF6', pt: '#22C3E6', dead: '#9AA9B0', obs: '#F5A524', drift: '#8B5CF6' };
 const S = {
   space: 'room', W: 5, H: 4, Z: 2.7, n: 5, zDev: 1.3, zKnow: true, zAssume: 1.3, partition: false,
-  src: 'demo', pos: [2.5, 2], trail: [], showTrail: true, heading: null, align: 0, fine: 0, stepLen: 0.7, scale: 1, steps: 0,
-  anchors: [], sel: 0, dead: new Set(), obstruct: new Set(), drift: new Set(),
+  src: 'demo', pos: [2.5, 2], trail: [], showTrail: true, heading: null, scale: 1, steps: 0, path: 0,
+  anchors: [], all: null, k: 4, sel: 0, dead: new Set(), obstruct: new Set(), drift: new Set(),
   model: 'rssi', sigDb: 4, sigM: 0.6, loss: 0.1, rssi1m: -59, pn: 2.2, scorer: 'heuristic',
+  mode: 'demo', host: '', samples: [], seq: 0, link: false, liveTruth: null, calib: null, heard: {},
   view: { tilt: 90, yaw: 0, zoom: 1 }, show: { truth: true, locus: true, ls: true, kf: false, pt: true },
 };
-try { const j = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); ['W', 'H', 'Z', 'n', 'zDev', 'model', 'sigDb', 'loss', 'rssi1m', 'pn', 'stepLen', 'scale'].forEach(k => { if (j[k] != null) S[k] = j[k]; }); } catch (e) { }
-const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(Object.fromEntries(['W', 'H', 'Z', 'n', 'zDev', 'model', 'sigDb', 'loss', 'rssi1m', 'pn', 'stepLen', 'scale'].map(k => [k, S[k]])))); } catch (e) { } };
+const SAVED = ['W', 'H', 'Z', 'k', 'zDev', 'model', 'sigDb', 'loss', 'rssi1m', 'pn', 'host'];
+let savedSlots = null;
+try { const j = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); SAVED.forEach(k => { if (j[k] != null) S[k] = j[k]; }); if (Array.isArray(j.slots) && j.slots.length === 6) savedSlots = j.slots; } catch (e) { }
+const save = () => { try { const o = Object.fromEntries(SAVED.map(k => [k, S[k]])); if (S.space === 'room' && S.all) o.slots = S.all.map(a => ({ x: a.x, y: a.y, z: a.z, on: a.on, p1: a.p1 })); localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) { } };
 
-/* ---------- space / anchors ---------- */
-function defaultRoomAnchors() {
-  const W = S.W, H = S.H, Z = S.Z, m = 0.3, lo = 0.4, hi = Math.max(1.2, Z - 0.35);
-  return [{ id: 'A1', x: m, y: m, z: lo }, { id: 'A2', x: W - m, y: m, z: hi }, { id: 'A3', x: W - m, y: H - m, z: lo }, { id: 'A4', x: m, y: H - m, z: hi },
-  { id: 'A5', x: W / 2, y: m, z: Math.min(1.4, hi) }, { id: 'A6', x: W / 2, y: H - m, z: hi }];
+/* ---------- space / beacons: always 6 slots (beacon IDs 1-6 in the LOCUS Beacon app), each on or off ---------- */
+const LAYOUT = {
+  2: (W, H) => [[.3, .3], [W - .3, .3]], 3: (W, H) => [[.3, .3], [W - .3, .3], [W / 2, H - .3]],
+  4: (W, H) => [[.3, .3], [W - .3, .3], [W - .3, H - .3], [.3, H - .3]], 6: (W, H) => [[.3, .3], [W / 2, .3], [W - .3, .3], [W - .3, H - .3], [W / 2, H - .3], [.3, H - .3]]
+};
+/* preset positions; heights alternate low/high so >= 4 beacons can also observe the phone's height */
+function presetAnchors(k) {
+  const W = S.W, H = S.H, lo = 0.4, hi = Math.max(1.2, S.Z - 0.35), pts = (LAYOUT[k] || LAYOUT[4])(W, H), old = S.all || [];
+  return Array.from({ length: 6 }, (_, i) => ({ id: 'A' + (i + 1), b: i + 1, x: pts[i] ? pts[i][0] : W / 2, y: pts[i] ? pts[i][1] : H / 2, z: i % 2 ? hi : lo, on: i < k, p1: old[i] && old[i].p1 != null ? old[i].p1 : null }));
 }
+function activate() { S.anchors = S.all.filter(a => a.on); S.n = S.anchors.length; S.k = S.n; S.sel = Math.max(0, Math.min(S.sel, S.n - 1)); }
 let eng = null, last = null;
 function partitions() { return S.partition && S.space === 'room' ? [[S.W / 2, 0, S.W / 2, S.H * 0.36], [S.W / 2, S.H * 0.64, S.W / 2, S.H]] : []; }
 function rebuild(keepAnchors) {
   if (S.space === 'hospital') {
     setSite('hospital'); S.Z = 3; S.W = FLOOR.w; S.H = FLOOR.h;
-    const base = DROP_ORDER.map(i => ANCHORS[i]);
-    S.anchors = base.map((a, i) => ({ id: a.id, x: a.x, y: a.y, z: i % 2 ? 0.9 : 2.6 }));
+    const old = S.all || [], base = DROP_ORDER.slice(0, 6).map(i => ANCHORS[i]);
+    S.all = base.map((a, i) => ({ id: a.id, b: i + 1, x: a.x, y: a.y, z: i % 2 ? 0.9 : 2.6, on: keepAnchors && old[i] ? old[i].on : i < S.k, p1: old[i] ? old[i].p1 : null }));
   } else {
-    const all = (keepAnchors && S.all) ? S.all : defaultRoomAnchors();
-    S.anchors = all.map(a => ({ ...a, x: Math.min(S.W - .1, Math.max(.1, a.x)), y: Math.min(S.H - .1, Math.max(.1, a.y)), z: Math.min(S.Z, Math.max(0, a.z)) }));
-    setRoom(S.W, S.H, S.anchors, partitions());
+    let all = keepAnchors && S.all ? S.all : presetAnchors(S.k);
+    if (savedSlots) { all = all.map((a, i) => ({ ...a, ...savedSlots[i] })); savedSlots = null; }
+    S.all = all.map((a, i) => ({ ...a, id: 'A' + (i + 1), b: i + 1, x: Math.min(S.W - .1, Math.max(.1, a.x)), y: Math.min(S.H - .1, Math.max(.1, a.y)), z: Math.min(S.Z, Math.max(0, a.z)) }));
   }
-  S.all = S.anchors; S.anchors = S.all.slice(0, S.n);
-  if (S.space === 'hospital') { /* engine uses the hospital walls; anchors already in drop order */ }
+  if (!S.all.some(a => a.on)) S.all[0].on = true;
+  activate();
+  if (S.space === 'room') setRoom(S.W, S.H, S.anchors, partitions());
   S.pos = [Math.min(S.W - .2, Math.max(.2, S.pos[0])), Math.min(S.H - .2, Math.max(.2, S.pos[1]))];
   if (S.space === 'hospital' && (S.pos[0] < 1 || S.pos[1] < 1)) S.pos = [3, 12];
-  newEngine(); S.trail = []; S.sel = Math.min(S.sel, S.n - 1);
-  fitView();
+  newEngine(); S.trail = []; S.estTrail = []; S.path = 0; S.pp = null; S.liveTruth = null;
+  fitView(); save();
 }
 function newEngine() {
   const sc = S.scorer === 'ml' ? trustPredict : null;
@@ -660,8 +676,9 @@ function stepMove(dx, dy) {
 }
 function updateTruth(dt) {
   const spd = S.space === 'hospital' ? 1.4 : 0.9;
+  if (S.mode === 'live') return;   /* real radio: the only truth is where the user taps */
+  if (S.calib != null) { const a = S.all[S.calib], dz = a.z - S.zDev, rh = Math.sqrt(Math.max(0, 1 - dz * dz)), cx = S.W / 2 - a.x, cy = S.H / 2 - a.y, L = Math.hypot(cx, cy) || 1; S.pos = [a.x + cx / L * rh, a.y + cy / L * rh]; return; }
   if (S.src === 'demo') { const p = demoPath(); demoI %= p.length; if (moveToward(p[demoI][0], p[demoI][1], spd, dt)) demoI = (demoI + 1) % p.length; }
-  else if (S.src === 'phone') { if (diag.hold) { const h = S.heading == null ? S.align : S.heading, a = (h - S.align - S.fine) * Math.PI / 180, L = 1.1 * S.scale * dt; stepMove(L * Math.sin(a), -L * Math.cos(a)); } }
   else if (S.src === 'remote') { if (remote.pos) { const k = 0.5; S.pos = [S.pos[0] + k * (remote.pos[0] - S.pos[0]), S.pos[1] + k * (remote.pos[1] - S.pos[1])]; } }
   else if (S.src === 'touch') {
     let vx = (keys.d || keys.ArrowRight ? 1 : 0) - (keys.a || keys.ArrowLeft ? 1 : 0) + joy.x, vy = (keys.s || keys.ArrowDown ? 1 : 0) - (keys.w || keys.ArrowUp ? 1 : 0) + joy.y;
@@ -671,63 +688,158 @@ function updateTruth(dt) {
   }
 }
 
-/* ---------- phone sensors ---------- */
-const sd = new StepDetector(), hf = new HeadingFilter(0.25); const diag = { motion: 0, ori: 0, t0: 0, rate: 0, n0: 0, lastStep: 0, hold: false }; let sensOn = false, lastMotion = 0, absSeen = false, gpsW = null, gpsOrigin = null, gpsLast = null;
-function stepLenFromHeight() { return Math.round(parseFloat($('i-hgt').value) * 0.415) / 100; }
-function onMotion(ev) {
-  const a = (ev.accelerationIncludingGravity && ev.accelerationIncludingGravity.x != null) ? ev.accelerationIncludingGravity : (ev.acceleration && ev.acceleration.x != null ? ev.acceleration : null);
-  if (!a) return; const now = performance.now(); lastMotion = now; diag.motion++; if (!diag.t0) { diag.t0 = now; diag.n0 = 0; }
-  const t = (ev.timeStamp && ev.timeStamp > 1) ? ev.timeStamp : now;
-  if (sd.push(a.x || 0, a.y || 0, a.z || 0, t) && S.src === 'phone') { diag.lastStep = now; phoneStep(); }
+/* ---------- receiver phone (LOCUS Beacon app): GET http://<ip>:8080/api/samples?since=N -> [[seq, beaconId, rssi, msAgo], ...] ---------- */
+let poll = null;
+function startLive() {
+  const h = $('i-host').value.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, ''), base = h ? 'http://' + h : ''; S.host = h; save();
+  if (poll) clearInterval(poll); S.seq = 0; S.link = false; S.samples = []; let fails = 0, busy = false;
+  if (!h) { $('n-live').textContent = 'Type the address shown in the app (e.g. 192.168.43.1:8080), then Connect.'; return; }
+  $('n-live').textContent = 'Connecting to ' + h + '…';
+  poll = setInterval(async () => {
+    if (busy) return; busy = true;
+    try {
+      const ac = new AbortController(), to = setTimeout(() => ac.abort(), 3000), r = await fetch(base + '/api/samples?since=' + S.seq, { signal: ac.signal, cache: 'no-store' }); clearTimeout(to);
+      const j = await r.json(), now = performance.now(); fails = 0; if (j.seq < S.seq) S.seq = 0;
+      (j.samples || []).forEach(a => S.samples.push({ b: a[1], rssi: a[2], t: now - a[3] })); S.seq = j.seq;
+      if (!S.link) $('n-live').textContent = 'Linked to ' + (j.device || 'receiver') + '. Packets are real Bluetooth advertisements.'; S.link = true;
+    } catch (e) { if (++fails > 8 && S.link !== false) { S.link = false; $('n-live').textContent = 'No link to ' + h + '. Same Wi-Fi / hotspot? Receiver screen on?' + (location.protocol === 'https:' ? ' This https page cannot reach http devices: download it first (below).' : ''); } }
+    busy = false;
+  }, 250);
 }
-function phoneStep() { S.steps++; const h = S.heading == null ? S.align : S.heading, a = (h - S.align - S.fine) * Math.PI / 180, L = S.stepLen * S.scale; stepMove(L * Math.sin(a), -L * Math.cos(a)); }
-function onOri(ev) {
-  diag.ori++;
-  if (ev.type === 'deviceorientation' && absSeen) return; if (ev.type === 'deviceorientationabsolute') absSeen = true;
-  let alpha = ev.alpha; if (typeof ev.webkitCompassHeading === 'number') alpha = 360 - ev.webkitCompassHeading;
-  if (alpha == null || ev.beta == null) return;
-  S.heading = hf.push(headingFromEuler(alpha, ev.beta, ev.gamma || 0));
+function stopLive() { if (poll) clearInterval(poll); poll = null; S.link = false; }
+/* real RSSI -> range per active beacon: median of the last 0.9 s, log-distance model with the beacon's own 1 m value */
+function liveMeas(assumedZ) {
+  const now = performance.now(), maxR = Math.hypot(S.W, S.H, S.Z) * 1.2;
+  return S.anchors.map(a => {
+    const v = S.samples.filter(m => m.b === a.b && m.t > now - 900).map(m => m.rssi).sort((x, y) => x - y); if (!v.length) return null;
+    const rssi = v[v.length >> 1], p1 = a.p1 != null ? a.p1 : S.rssi1m, r3 = Math.min(maxR, Math.max(0.3, Math.pow(10, (p1 - rssi) / (10 * S.pn)))), dz = (a.z || 0) - assumedZ;
+    return { r: Math.sqrt(Math.max(0.09, r3 * r3 - dz * dz)), r3, rssi, nlos: false, d3: null };
+  });
 }
-async function enableSensors() {
-  const note = $('n-sens');
-  try {
-    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-      const r1 = await DeviceMotionEvent.requestPermission(); let r2 = 'granted'; if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) r2 = await DeviceOrientationEvent.requestPermission();
-      if (r1 !== 'granted' || r2 !== 'granted') { note.textContent = 'Permission denied. On iPhone: Settings → Safari → Motion & Orientation Access → on, then reload.'; return; }
+function setMode(m) {
+  S.mode = m; $('b-demo').setAttribute('aria-pressed', m === 'demo'); $('b-live').setAttribute('aria-pressed', m === 'live');
+  $('o-live').style.display = m === 'live' ? 'flex' : 'none'; $('o-demo').style.display = m === 'demo' ? 'flex' : 'none'; $('n-https').style.display = m === 'live' && location.protocol === 'https:' ? 'block' : 'none';
+  S.samples = []; S.heard = {}; S.liveTruth = null; S.trail = []; S.estTrail = []; S.path = 0; S.pp = null; newEngine();
+  if (m === 'demo') { stopLive(); setSource(S.src === 'live' ? 'demo' : S.src); } else { if (S.src === 'touch') setSource('demo'); S.src = 'live'; srcPill(); if ($('i-host').value.trim()) startLive(); }
+}
+
+/* ---------- beacons table, presets, calibration, health ---------- */
+function layout(k) {
+  if (S.space === 'room') { S.k = k; S.all = presetAnchors(k); } else S.all.forEach((a, i) => a.on = i < k);
+  rebuild(true); buildTable(); renderAnchors();
+}
+function buildTable() {
+  document.querySelectorAll('#lays button').forEach(b => b.classList.toggle('on', +b.dataset.lay === S.n && S.all.every((a, i) => a.on === i < S.n)));
+  const hosp = S.space === 'hospital'; $('i-W').value = S.W; $('i-H').value = S.H; $('i-W').disabled = $('i-H').disabled = hosp;
+  $('bt').innerHTML = S.all.map((a, i) => `<tr class="${a.on ? '' : 'off'}" data-i="${i}"><td><b>${a.b}</b><span class="hd"></span></td><td><input type="checkbox"${a.on ? ' checked' : ''} aria-label="Beacon ${a.b} on"></td><td><input type="number" step="0.1" data-k="x" value="${a.x.toFixed(1)}"></td><td><input type="number" step="0.1" data-k="y" value="${a.y.toFixed(1)}"></td><td class="c-r">–</td><td class="c-d">–</td><td><div class="tb"><i style="width:0"></i></div></td><td><button class="cal${a.p1 != null ? ' set' : ''}">${p1Label(i)}</button></td></tr>`).join('');
+  document.querySelectorAll('#bt tr').forEach(tr => {
+    const i = +tr.dataset.i, a = S.all[i], ins = tr.querySelectorAll('input');
+    ins[0].onchange = () => { if (!ins[0].checked && S.n <= 1) { ins[0].checked = true; return; } a.on = ins[0].checked; rebuild(true); buildTable(); renderAnchors(); };
+    [ins[1], ins[2]].forEach(inp => inp.onchange = () => { const v = parseFloat(inp.value); if (isNaN(v)) return; a[inp.dataset.k] = Math.min(inp.dataset.k === 'x' ? S.W : S.H, Math.max(0, v)); relayout(); });
+    tr.querySelector('.cal').onclick = () => calibrate(i);
+  });
+}
+const p1Label = i => S.all[i].p1 != null ? S.all[i].p1 + ' dBm' : '1 m';
+/* average 3 s of one beacon's packets; in Demo the walker stands 1 m from it meanwhile. resolves {med, n, sd} */
+function measureBeacon(i, onProg) {
+  return new Promise(res => {
+    const t0 = performance.now(), D = 3000, b = S.all[i].b; if (S.mode === 'demo') S.calib = i;
+    const tm = setInterval(() => {
+      const f = Math.min(1, (performance.now() - t0) / D); onProg && onProg(f); if (f < 1) return; clearInterval(tm); S.calib = null;
+      const rs = S.samples.filter(m => m.b === b && m.t > t0 + (S.mode === 'demo' ? 300 : 0)).map(m => m.rssi).sort((x, y) => x - y);
+      if (!rs.length) return res({ med: null, n: 0, sd: 0 });
+      const mean = rs.reduce((x, y) => x + y, 0) / rs.length; res({ med: rs[rs.length >> 1], n: rs.length, sd: Math.sqrt(rs.reduce((x, y) => x + (y - mean) * (y - mean), 0) / rs.length) });
+    }, 100);
+  });
+}
+function setP1(i, v) { S.all[i].p1 = v; const c = document.querySelectorAll('#bt .cal')[i]; if (c) { c.textContent = p1Label(i); c.classList.toggle('set', v != null); } save(); }
+async function calibrate(i) {
+  if (S.calib != null || !S.all[i].on) return; const btn = document.querySelectorAll('#bt .cal')[i]; btn.disabled = true;
+  const m = await measureBeacon(i, f => { btn.textContent = Math.round(f * 100) + '%'; }); btn.disabled = false;
+  if (m.n < 4) { btn.textContent = 'no data'; setTimeout(() => btn.textContent = p1Label(i), 1500); return; }
+  setP1(i, m.med);
+}
+const G = { list: [], k: 0, busy: false };
+function gShow() {
+  const box = $('gcal'); if (!G.list.length) { box.style.display = 'none'; return; }
+  const i = G.list[G.k]; box.style.display = 'flex'; $('g-title').textContent = 'Beacon ' + S.all[i].b + ' (' + (G.k + 1) + ' of ' + G.list.length + ')';
+  if (!G.busy) { $('g-text').textContent = S.mode === 'demo' ? 'Demo: the walker will stand 1 m from beacon ' + S.all[i].b + '. Press Measure.' : 'Hold the receiver phone exactly 1 m from beacon ' + S.all[i].b + ', same height, screen up. Keep still, then press Measure.'; $('g-bar').style.width = '0'; $('g-go').disabled = false; }
+}
+function gNext() { if (++G.k >= G.list.length) { G.list = []; $('gcal').style.display = 'none'; $('n-cal').textContent = 'Done. Calibrated: ' + (S.all.filter(a => a.on && a.p1 != null).map(a => a.b).join(', ') || 'none') + '.'; } else gShow(); }
+async function gGo() {
+  if (G.busy || !G.list.length) return; const i = G.list[G.k], b = S.all[i].b; G.busy = true; $('g-go').disabled = true; $('g-text').textContent = 'Measuring… keep the phone still.';
+  const m = await measureBeacon(i, f => { $('g-bar').style.width = Math.round(f * 100) + '%'; }); G.busy = false; if (!G.list.length) return;
+  if (m.n < 8) { $('g-text').textContent = 'Only ' + m.n + ' packets heard. Move closer, check beacon ' + b + ' is advertising, then press Measure again.'; $('g-go').disabled = false; return; }
+  if (m.sd > 6) { $('g-text').textContent = 'Signal too jumpy (±' + m.sd.toFixed(1) + ' dB). Hold still, clear the path and measure again.'; $('g-go').disabled = false; return; }
+  setP1(i, m.med); $('g-text').textContent = 'Saved ' + m.med + ' dBm at 1 m (' + m.n + ' packets, ±' + m.sd.toFixed(1) + ' dB). Next…'; setTimeout(gNext, 1100);
+}
+/* beacon health: silent / weak / low packet rate / down-weighted, plus geometry */
+function health() {
+  const now = performance.now(), res = [], heard = [], c = cur;
+  S.anchors.forEach((a, j) => {
+    const c3 = S.samples.filter(m => m.b === a.b && m.t > now - 3000).length, rate = c3 / 3, m = c && c.meas[j], t = c && c.out ? c.out.trust[j] : null; let lv = 'ok', msg = '';
+    if (c3 === 0) { const ago = S.heard[a.b] ? (now - S.heard[a.b]) / 1000 : null; lv = 'bad'; msg = 'Beacon ' + a.b + ': no packets' + (ago != null ? ' for ' + ago.toFixed(0) + ' s' : '') + '. Is that phone advertising, screen on, and close enough?'; }
+    else {
+      heard.push(a);
+      if (m && m.rssi < -88) { lv = 'warn'; msg = 'Beacon ' + a.b + ': weak signal (' + m.rssi + ' dBm). Move it closer or clear the line of sight.'; }
+      else if (rate < 2) { lv = 'warn'; msg = 'Beacon ' + a.b + ': only ' + rate.toFixed(1) + ' packets/s. Check Bluetooth and battery saver on that phone.'; }
+      else if (t != null && t < 0.4) { lv = 'warn'; msg = 'Beacon ' + a.b + ' is being down-weighted' + (c.out.reasons[j] ? ': ' + c.out.reasons[j] : '') + '.'; }
     }
-    if (!sensOn) { addEventListener('devicemotion', onMotion); addEventListener('deviceorientationabsolute', onOri, true); addEventListener('deviceorientation', onOri, true); sensOn = true; }
-    note.textContent = 'Sensors on. Waiting for motion data…'; setTimeout(() => { if (!lastMotion) note.textContent = 'No motion data received. This device/browser has no motion sensors (desktop?) or they are blocked. Use "+1 test step" to try it, or open this page on your phone.'; }, 1800);
-  } catch (e) { note.textContent = 'Could not start sensors: ' + (e && e.message || e); }
+    res.push({ a, lv, msg, rate });
+  });
+  const geo = [];
+  if (S.n >= 3 && heard.length < 3) geo.push('Only ' + heard.length + ' of ' + S.n + ' beacons heard. Accuracy drops with fewer than 3.');
+  if (heard.length >= 3) {
+    let ds = 0, A = null, B = null; heard.forEach(p => heard.forEach(q => { const d = Math.hypot(p.x - q.x, p.y - q.y); if (d > ds) { ds = d; A = p; B = q; } }));
+    const off = Math.max(...heard.map(p => Math.abs((B.x - A.x) * (A.y - p.y) - (A.x - p.x) * (B.y - A.y)) / (ds || 1)));
+    if (off < 0.8) geo.push('The heard beacons are almost in a line. Move one off the line (triangle or square) for a 2-D fix.');
+  } else if (S.n === 2) geo.push('2 beacons give two mirror-image answers. Use 3 (triangle) or more for a 2-D fix.');
+  return { res, geo };
 }
-function startGps() {
-  if (!navigator.geolocation) { $('n-gps').textContent = 'This browser has no geolocation.'; return; }
-  if (gpsW != null) return;
-  gpsW = navigator.geolocation.watchPosition(p => {
-    const c = p.coords; gpsLast = c; if (!gpsOrigin) gpsOrigin = [c.latitude, c.longitude];
-    const [e, n] = gpsToLocal(c.latitude, c.longitude, gpsOrigin[0], gpsOrigin[1]), a = S.align * Math.PI / 180, k = S.scale;
-    if (S.src === 'gps' && c.accuracy < 60) { const tx = S.W / 2 + (e * Math.cos(a) + n * Math.sin(a)) * k, ty = S.H / 2 - (-e * Math.sin(a) + n * Math.cos(a)) * k; S.pos = [Math.min(S.W - .1, Math.max(.1, S.pos[0] + 0.5 * (tx - S.pos[0]))), Math.min(S.H - .1, Math.max(.1, S.pos[1] + 0.5 * (ty - S.pos[1])))]; }
-    $('n-gps').textContent = 'Accuracy ±' + c.accuracy.toFixed(0) + ' m' + (c.accuracy > 15 ? ' - too coarse for a room; try Phone motion.' : '.');
-  }, e => { $('n-gps').textContent = 'GPS error: ' + e.message; gpsW = null; }, { enableHighAccuracy: true, maximumAge: 500, timeout: 15000 });
+function updateBeacons() {
+  const c = cur, rows = document.querySelectorAll('#bt tr'); if (!c) return;
+  S.all.forEach((a, i) => {
+    const tr = rows[i]; if (!tr) return; const j = S.anchors.indexOf(a), m = j >= 0 ? c.meas[j] : null, t = j >= 0 && c.out ? c.out.trust[j] : null;
+    tr.querySelector('.c-r').textContent = m ? m.rssi + ' dBm' : '–'; tr.querySelector('.c-d').textContent = m ? m.r3.toFixed(1) + ' m' : '–';
+    const bar = tr.querySelector('.tb i'); bar.style.width = (t != null && m ? Math.round(t * 100) : 0) + '%'; bar.style.background = trustCol(t || 0); tr.title = j >= 0 && c.out ? c.out.reasons[j] || '' : '';
+    const d = tr.querySelector('.hd'); d.className = 'hd'; d.title = '';
+    tr.querySelectorAll('input[type=number]').forEach(inp => { const v = a[inp.dataset.k].toFixed(1); if (inp !== document.activeElement && inp.value !== v) inp.value = v; });   /* follow anchor drags in the view */
+  });
+  const wb = $('warn');
+  if (S.mode === 'live' && !S.link) { wb.style.display = 'block'; wb.className = 'warnbox warn'; wb.textContent = poll ? 'Waiting for the receiver phone…' : 'Not connected: enter the receiver address above and press Connect.'; $('n-path').textContent = 'Path: ' + S.path.toFixed(1) + ' m'; return; }
+  const H = health();
+  H.res.forEach(h => { const d = rows[S.all.indexOf(h.a)] && rows[S.all.indexOf(h.a)].querySelector('.hd'); if (d) { d.className = 'hd ' + h.lv; d.title = h.msg || 'OK, ' + h.rate.toFixed(0) + ' packets/s'; } });
+  const msgs = H.res.filter(h => h.msg).map(h => ({ lv: h.lv, t: h.msg })).concat(H.geo.map(t => ({ lv: 'warn', t })));
+  if (!msgs.length) { wb.style.display = S.mode === 'demo' || S.link ? 'block' : 'none'; wb.className = 'warnbox ok'; wb.textContent = 'All active beacons healthy.'; }
+  else { wb.style.display = 'block'; wb.className = 'warnbox ' + (msgs.some(m => m.lv === 'bad') ? 'bad' : 'warn'); wb.innerHTML = msgs.map(m => '• ' + m.t.replace(/[<>&]/g, '')).join('<br>'); }
+  const o = c.out; if (o) {
+    const worst = S.anchors.map((a, j) => ({ a, t: o.trust[j], r: o.reasons[j] })).sort((p, q) => p.t - q.t)[0];
+    $('n-why').textContent = worst && worst.t < 0.6 ? 'Beacon ' + worst.a.b + ' down-weighted: ' + (worst.r || 'low trust') : 'Beacon # is the ID you pick in the app on each beacon phone. Untick one to test losing a beacon.';
+  }
+  $('n-path').textContent = 'Path: ' + S.path.toFixed(1) + ' m';
 }
 
 /* ---------- simulation tick (10 Hz) ---------- */
 let stats = { loc: [], ls: [], kf: [] }, logRows = [], cur = null;
 function tick() {
-  const dt = 0.1, truth = S.pos.slice(), assumed = S.zKnow ? S.zDev : S.zAssume;
-  const meas = measure3D(truth, S.zDev, assumed, S.anchors, radioCfg(), eng.rng, wallsBetween);
+  const dt = 0.1, live = S.mode === 'live', truth = live ? null : S.pos.slice(), assumed = S.zKnow ? S.zDev : S.zAssume, now = performance.now();
+  const meas = live ? liveMeas(assumed) : measure3D(truth, S.zDev, assumed, S.anchors, radioCfg(), eng.rng, wallsBetween);
+  if (!live) meas.forEach((m, i) => { if (m) S.samples.push({ b: S.anchors[i].b, rssi: m.rssi, t: now }); });   /* demo packets feed the same health/calibration code */
+  S.samples.forEach(m => { if (m.t > now - 400) S.heard[m.b] = Math.max(S.heard[m.b] || 0, m.t); }); S.samples = S.samples.filter(m => m.t > now - 6000);
   const ls = lsFix(S.anchors, meas, eng.ls); if (ls) eng.ls = ls; const kf = eng.kf.update(ls, dt);
   eng.loc.sigma = engSigma(); const out = eng.loc.step(meas, dt); eng.t += dt;
   let p3 = null;
   if (out) { const w = out.trust.map((t, j) => out.usable[j] ? t * t : 0); p3 = fix3D(S.anchors, meas, [out.pos[0], out.pos[1], S.zDev], w, { w: S.W, h: S.H, z: S.Z }, 1.3, engSigma());
     /* height changes slowly: smooth it, and only trust it when the geometry can actually observe it */
     if (p3 && p3[3] < 0.8) { S.zEst = S.zEst == null ? p3[2] : S.zEst + 0.12 * (p3[2] - S.zEst); S.zStd = p3[3]; } else { S.zEst = null; S.zStd = null; } if (!p3) { S.zEst = null; S.zStd = null; } }
-  const e = q => q ? Math.hypot(q[0] - truth[0], q[1] - truth[1]) : null;
+  const e = q => q && truth ? Math.hypot(q[0] - truth[0], q[1] - truth[1]) : null;
   if (p3 && S.zEst != null) p3 = [p3[0], p3[1], S.zEst, S.zStd]; else p3 = null;
   cur = { truth, meas, ls, kf, out, p3, e: { loc: out && e(out.pos), ls: e(ls), kf: e(kf) } };
   ['loc', 'ls', 'kf'].forEach(k => { if (cur.e[k] != null) { stats[k].push(cur.e[k]); if (stats[k].length > 900) stats[k].shift(); } });
-  if (out) { S.estTrail = (S.estTrail || []); S.estTrail.push(out.pos.slice()); if (S.estTrail.length > 80) S.estTrail.shift(); }
-  if (S.showTrail) { const t = S.trail, l = t[t.length - 1]; if (!l || Math.hypot(l[0] - truth[0], l[1] - truth[1]) > 0.04) { t.push(truth); if (t.length > 160) t.shift(); } }
-  if (logRows.length < 30000 && out) logRows.push([eng.t.toFixed(1), ...truth.map(v => v.toFixed(3)), S.zDev, ...out.pos.map(v => v.toFixed(3)), p3 ? p3[2].toFixed(2) : '', ls ? ls[0].toFixed(3) : '', ls ? ls[1].toFixed(3) : '', cur.e.loc.toFixed(3), cur.e.ls == null ? '' : cur.e.ls.toFixed(3), cur.e.kf == null ? '' : cur.e.kf.toFixed(3), ...S.anchors.map((a, i) => meas[i] ? meas[i].rssi : ''), ...S.anchors.map((a, i) => out.trust[i].toFixed(2))]);
+  if (out) { S.estTrail = (S.estTrail || []); S.estTrail.push(out.pos.slice()); if (S.estTrail.length > 80) S.estTrail.shift();
+    if (!S.pp) S.pp = out.pos.slice(); const dm = Math.hypot(out.pos[0] - S.pp[0], out.pos[1] - S.pp[1]); if (dm > 0.4) { S.path += dm; S.pp = out.pos.slice(); } }
+  if (S.showTrail && truth) { const t = S.trail, l = t[t.length - 1]; if (!l || Math.hypot(l[0] - truth[0], l[1] - truth[1]) > 0.04) { t.push(truth); if (t.length > 160) t.shift(); } }
+  if (logRows.length < 30000 && out && truth) logRows.push([eng.t.toFixed(1), ...truth.map(v => v.toFixed(3)), S.zDev, ...out.pos.map(v => v.toFixed(3)), p3 ? p3[2].toFixed(2) : '', ls ? ls[0].toFixed(3) : '', ls ? ls[1].toFixed(3) : '', cur.e.loc.toFixed(3), cur.e.ls == null ? '' : cur.e.ls.toFixed(3), cur.e.kf == null ? '' : cur.e.kf.toFixed(3), ...S.anchors.map((a, i) => meas[i] ? meas[i].rssi : ''), ...S.anchors.map((a, i) => out.trust[i].toFixed(2))]);
 }
 
 /* ---------- 3D rendering ---------- */
@@ -774,11 +886,12 @@ function draw() {
   /* trails */
   const trl = (arr, col, wd) => { if (arr && arr.length > 1) { g.beginPath(); arr.forEach((q, i) => { const p = P(q[0], q[1], 0); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }); g.strokeStyle = col; g.lineWidth = wd; g.stroke(); } };
   if (S.show.truth && S.showTrail) trl(S.trail, 'rgba(11,58,74,.35)', 2); if (S.show.locus) trl(S.estTrail, 'rgba(16,185,129,.55)', 2);
+  if (S.mode === 'live' && S.liveTruth) { const p = P(S.liveTruth[0], S.liveTruth[1], 0); g.beginPath(); g.arc(p[0], p[1], 11, 0, 7); g.strokeStyle = COL.truth; g.lineWidth = 2.5; g.setLineDash([4, 3]); g.stroke(); g.setLineDash([]); g.fillStyle = COL.truth; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('you (tapped)', p[0], p[1] - 15); }
   if (target && S.src === 'touch') { const p = P(target[0], target[1], 0); g.beginPath(); g.arc(p[0], p[1], 9, 0, 7); g.strokeStyle = '#10B981'; g.lineWidth = 2; g.stroke(); }
   /* objects sorted far -> near */
   const items = [];
   S.anchors.forEach((a, i) => items.push({ d: P(a.x, a.y, a.z)[2], f: () => drawAnchor(a, i) }));
-  if (c) items.push({ d: P(c.truth[0], c.truth[1], S.zDev)[2], f: drawPhone });
+  if (c && c.truth) items.push({ d: P(c.truth[0], c.truth[1], S.zDev)[2], f: drawPhone });
   if (c && c.out && S.show.locus) { const z = c.p3 ? c.p3[2] : S.zDev; items.push({ d: P(c.out.pos[0], c.out.pos[1], z)[2] + 0.001, f: () => drawEst(c.out.pos, z, COL.locus, 'LOCUS', true) }); }
   if (c && c.ls && S.show.ls) items.push({ d: P(c.ls[0], c.ls[1], S.zDev)[2] - 0.001, f: () => drawEst(c.ls, S.zDev, COL.ls, 'trilat', false) });
   if (c && c.kf && S.show.kf) items.push({ d: P(c.kf[0], c.kf[1], S.zDev)[2] - 0.002, f: () => drawEst(c.kf, S.zDev, COL.kf, 'kalman', false) });
@@ -786,10 +899,11 @@ function draw() {
   g.fillStyle = '#7A9AA6'; g.font = '600 11px Figtree'; g.textAlign = 'right'; if (w > 700) g.fillText(W.toFixed(1) + ' × ' + H.toFixed(1) + ' × ' + Z.toFixed(1) + ' m  ·  tilt ' + tilt + '°', w - 12, h - 76);
 }
 function drawAnchor(a, i) {
-  const base = P(a.x, a.y, 0), top = P(a.x, a.y, a.z), dead = S.dead.has(a.id), ob = S.obstruct.has(a.id), dr = S.drift.has(a.id), col = dead ? COL.dead : ob ? COL.obs : dr ? COL.drift : '#0E9DBE';
+  const base = P(a.x, a.y, 0), top = P(a.x, a.y, a.z), dead = S.dead.has(a.id) || (S.mode === 'live' && cur && !cur.meas[i]), ob = S.obstruct.has(a.id), dr = S.drift.has(a.id), col = dead ? COL.dead : ob ? COL.obs : dr ? COL.drift : '#0E9DBE';
   const m = cur && cur.meas[i], t = cur && cur.out ? cur.out.trust[i] : 0.8;
   if (S.view.tilt < 89) line(base, top, 'rgba(14,157,190,.35)', 1.5, [3, 3]); dot(base, 3, 'rgba(14,157,190,.35)');
-  if (cur && !dead && S.show.locus) { const p = P(cur.truth[0], cur.truth[1], S.zDev); g.save(); g.globalAlpha = m ? 0.8 : 0.18; line(top, p, m ? trustCol(t) : '#9AA9B0', m ? 1 + 2 * t : 1, m ? [] : [4, 5]); g.restore();
+  const ref = cur && (cur.truth || (cur.out && cur.out.pos));
+  if (ref && !dead && S.show.locus) { const p = P(ref[0], ref[1], S.zDev); g.save(); g.globalAlpha = m ? 0.8 : 0.18; line(top, p, m ? trustCol(t) : '#9AA9B0', m ? 1 + 2 * t : 1, m ? [] : [4, 5]); g.restore();
     if (S.view.tilt < 65 && m) { const dz = a.z - S.zDev, mid = [(top[0] + p[0]) / 2, (top[1] + p[1]) / 2]; g.fillStyle = '#0E9DBE'; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('Δz ' + (dz >= 0 ? '+' : '') + dz.toFixed(1) + ' m', mid[0], mid[1] - 4); } }
   if (i === S.sel) { g.beginPath(); g.arc(top[0], top[1], 15, 0, 7); g.strokeStyle = '#10B981'; g.lineWidth = 2; g.stroke(); }
   poly([[top[0], top[1] - 9], [top[0] + 8, top[1] - 4.5], [top[0] + 8, top[1] + 4.5], [top[0], top[1] + 9], [top[0] - 8, top[1] + 4.5], [top[0] - 8, top[1] - 4.5]], col, '#fff', 2);
@@ -801,7 +915,7 @@ function drawPhone() {
   const p = cur.truth, f = P(p[0], p[1], 0), t = P(p[0], p[1], S.zDev);
   g.beginPath(); g.ellipse(f[0], f[1], 9, 9 * Math.max(0.35, Math.sin(S.view.tilt * Math.PI / 180)), 0, 0, 7); g.fillStyle = 'rgba(11,58,74,.18)'; g.fill();
   if (S.view.tilt < 89) line(f, t, COL.truth, 2.5);
-  if (S.heading != null && (S.src === 'phone' || S.src === 'remote')) { const a = (S.src === 'remote' ? S.heading : (S.heading - S.align - S.fine)) * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
+  if (S.heading != null && S.src === 'remote') { const a = S.heading * Math.PI / 180, q = P(p[0] + Math.sin(a) * 0.9, p[1] - Math.cos(a) * 0.9, 0); line(f, q, '#10B981', 3); }
   dot(t, 8, COL.truth, '#fff'); g.fillStyle = '#fff'; g.fillRect(t[0] - 2.4, t[1] - 4, 4.8, 8);
   g.fillStyle = COL.truth; g.font = '700 10.5px Figtree'; g.textAlign = 'center'; g.fillText('phone ' + S.zDev.toFixed(1) + ' m', t[0], t[1] - 13);
 }
@@ -828,32 +942,29 @@ function renderAnchors() {
 function relayout() { if (S.space === 'room') { setRoom(S.W, S.H, S.anchors, partitions()); } newEngine(); renderAnchors(); }
 function syncFaults() { const a = S.anchors[S.sel]; if (!a) return; document.querySelectorAll('#faults button').forEach(b => { const f = b.dataset.f; b.setAttribute('aria-pressed', f === 'clear' ? 'false' : String(S[f === 'dead' ? 'dead' : f].has(a.id))); }); }
 function spaceNote() {
-  $('n-space').innerHTML = S.space === 'room' ? 'Your own room: set its real size, place anchors (virtual BLE beacons — or real ones later), walk with your phone.' : '<b>The 40 × 24 m hospital floor the ML model was trained on.</b> Your phone walk is scaled up (set <b>Walk scale</b> in Track, e.g. ×8) so crossing your room crosses a ward. The trained trust model is fully in-distribution here.';
+  $('n-space').innerHTML = S.space === 'room' ? 'Your own room: set its size and beacons in the <b>Beacons</b> tab (virtual BLE beacons in Demo, real phones in Receiver mode). Heights are set here.' : '<b>The 40 × 24 m hospital floor the ML model was trained on.</b> A synced phone walk is scaled up ×8 so crossing your room crosses a ward. The trained trust model is fully in-distribution here. Beacons 1-6 are the first six hospital anchors.';
   $('o-room').style.display = S.space === 'room' ? 'flex' : 'none';
   $('n-ml').innerHTML = S.scorer === 'ml' ? 'LightGBM trust model, <b>trained on ' + (TRUST_MODEL.n_train / 1000 | 0) + 'k simulated hospital readings</b> (AUC ' + TRUST_MODEL.auc.toFixed(2) + ' vs ' + TRUST_MODEL.auc_heuristic.toFixed(2) + ' for the heuristic), exported to run in your browser.' + (S.space === 'room' ? ' <b>Caution:</b> trained on a 40×24 m building; in a small room the features are out of its training range — compare with the heuristic.' : ' It detects bad readings better, but on the hidden benchmark it did not improve end-to-end position error.') : 'Hand-written scorer: residual vs motion model, jumps, variance. Default because it was equal or better end-to-end.';
 }
 function bindUI() {
-  document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 't-' + b.dataset.t)); if (b.dataset.t === 'space') renderAnchors(); });
+  document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 't-' + b.dataset.t)); if (b.dataset.t === 'space') renderAnchors(); if (b.dataset.t === 'beacons') buildTable(); });
   document.querySelectorAll('#views button').forEach(b => b.onclick = () => setView(b.dataset.v));
   $('tilt').oninput = e => { S.view.tilt = +e.target.value; anim = null; syncView(); }; $('yaw').oninput = e => { S.view.yaw = +e.target.value; anim = null; syncView(); };
   ['truth', 'locus', 'ls', 'kf', 'pt'].forEach(k => { const cb = $('L-' + k); cb.checked = S.show[k]; cb.parentElement.style.opacity = S.show[k] ? 1 : .4; cb.parentElement.onclick = e => { e.preventDefault(); S.show[k] = !S.show[k]; cb.checked = S.show[k]; cb.parentElement.style.opacity = S.show[k] ? 1 : .4; }; });
-  document.querySelectorAll('#srcs button').forEach(b => b.onclick = () => setSource(b.dataset.s));
-  $('b-sens').onclick = enableSensors; $('b-align').onclick = () => { if (S.heading == null) { $('n-ph').textContent = 'No heading yet - enable sensors first.'; return; } S.align = S.heading; S.fine = 0; $('i-off').value = 0; $('v-off').textContent = '0°'; };
-  $('i-sens').oninput = e => { sd.sens = +e.target.value; $('v-sens').textContent = '×' + sd.sens.toFixed(1); };
-  const hold = $('b-hold'); hold.onpointerdown = e => { diag.hold = true; hold.setPointerCapture(e.pointerId); if (S.src !== 'phone') setSource('phone'); }; hold.onpointerup = hold.onpointercancel = () => { diag.hold = false; };
-  $('b-step').onclick = () => { S.src === 'phone' ? phoneStep() : (setSource('phone'), phoneStep()); };
-  $('i-hgt').onchange = () => { S.stepLen = stepLenFromHeight(); $('i-step').value = S.stepLen.toFixed(2); save(); };
-  $('i-step').onchange = e => { S.stepLen = +e.target.value; save(); }; $('i-scale').onchange = e => { S.scale = +e.target.value; save(); };
-  $('i-off').oninput = e => { S.fine = +e.target.value; $('v-off').textContent = S.fine + '°'; };
-  $('b-gps').onclick = startGps; $('b-gps0').onclick = () => { gpsOrigin = gpsLast ? [gpsLast.latitude, gpsLast.longitude] : null; S.pos = [S.W / 2, S.H / 2]; };
-  $('b-reset').onclick = () => { S.trail = []; S.estTrail = []; }; $('b-trail').onclick = e => { S.showTrail = !S.showTrail; e.target.textContent = 'Trail: ' + (S.showTrail ? 'on' : 'off'); if (!S.showTrail) S.trail = []; };
-  $('b-copy').onclick = () => { $('i-url').select(); try { navigator.clipboard.writeText($('i-url').value); } catch (e) { document.execCommand('copy'); } };
-  $('b-share').onclick = () => Sync.share(); $('b-join').onclick = () => Sync.join($('i-code').value.trim()); $('b-leave').onclick = () => Sync.leave();
+  $('b-demo').onclick = () => setMode('demo'); $('b-live').onclick = () => setMode('live'); $('b-conn').onclick = startLive;
+  $('i-host').onkeydown = e => { if (e.key === 'Enter') startLive(); };
+  $('b-offline').onclick = async () => { try { const h = await (await fetch(location.href.split('#')[0], { cache: 'no-store' })).text(), a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([h], { type: 'text/html' })); a.download = 'locus-room-live.html'; a.click(); } catch (e) { $('n-live').textContent = 'Download failed: use your browser\'s Save page (Ctrl+S).'; } };
+  document.querySelectorAll('#walk button').forEach(b => b.onclick = () => setSource(b.dataset.w));
+  document.querySelectorAll('#lays button').forEach(b => b.onclick = () => layout(+b.dataset.lay));
+  const resizeRoom = () => { if (S.space !== 'room') return; S.W = Math.min(40, Math.max(2, +$('i-W').value || 5)); S.H = Math.min(24, Math.max(2, +$('i-H').value || 4)); if (LAYOUT[S.n] && S.all.every((a, i) => a.on === i < S.n)) S.all = presetAnchors(S.n); demoI = 0; S.pos = [S.W / 2, S.H / 2]; rebuild(true); buildTable(); renderAnchors(); };
+  $('i-W').onchange = resizeRoom; $('i-H').onchange = resizeRoom;
+  $('b-gcal').onclick = () => { G.list = S.all.map((a, i) => a.on ? i : -1).filter(i => i >= 0); G.k = 0; G.busy = false; gShow(); };
+  $('g-stop').onclick = () => { G.list = []; G.busy = false; S.calib = null; gShow(); }; $('g-skip').onclick = () => { if (!G.busy) gNext(); }; $('g-go').onclick = gGo;
+  $('b-reset').onclick = () => { S.trail = []; S.estTrail = []; S.path = 0; S.pp = null; }; $('b-trail').onclick = e => { S.showTrail = !S.showTrail; e.target.textContent = 'Trail: ' + (S.showTrail ? 'on' : 'off'); if (!S.showTrail) { S.trail = []; S.estTrail = []; } };
   document.querySelectorAll('#spaces button').forEach(b => b.onclick = () => setSpace(b.dataset.sp));
   const sl = (id, k, fmt, after) => { $('i-' + id).oninput = e => { S[k] = +e.target.value; $('v-' + id).textContent = fmt(S[k]); after && after(); save(); }; };
-  sl('W', 'W', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('H', 'H', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); }); sl('Z', 'Z', v => v.toFixed(1), () => { rebuild(false); renderAnchors(); });
-  $('i-n').oninput = e => { S.n = +e.target.value; $('v-n').textContent = S.n; S.anchors = S.all.slice(0, S.n); S.sel = Math.min(S.sel, S.n - 1); newEngine(); renderAnchors(); save(); };
-  $('g-part').onclick = e => { S.partition = !S.partition; e.target.setAttribute('aria-pressed', S.partition); demoI = 0; rebuild(true); renderAnchors(); };
+  sl('Z', 'Z', v => v.toFixed(1), () => { rebuild(true); renderAnchors(); });
+  $('g-part').onclick = e => { S.partition = !S.partition; e.target.setAttribute('aria-pressed', S.partition); demoI = 0; rebuild(true); renderAnchors(); buildTable(); };
   $('i-zd').oninput = e => { S.zDev = +e.target.value; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; if (S.zKnow) { S.zAssume = S.zDev; $('i-za').value = S.zDev; $('v-za').textContent = S.zDev.toFixed(2) + ' m'; } renderAnchorsDz(); save(); };
   document.querySelectorAll('#zpre button').forEach(b => b.onclick = () => { $('i-zd').value = b.dataset.z; $('i-zd').oninput({ target: $('i-zd') }); });
   $('g-zknow').onclick = e => { S.zKnow = !S.zKnow; e.target.setAttribute('aria-pressed', S.zKnow); $('f-zas').style.display = S.zKnow ? 'none' : 'flex'; if (S.zKnow) S.zAssume = S.zDev; };
@@ -876,36 +987,40 @@ function bindUI() {
     else if (mode === 'pinch' && ptrs.size === 2) { const p = [...ptrs.values()]; S.view.zoom = Math.min(4, Math.max(0.5, st.z * Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]) / st.d)); } };
   cv.onpointerup = cv.onpointercancel = e => { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     if (mode === 'anchor' && st.moved > 3) relayout();
-    else if ((mode === 'orbit') && st.moved <= 5 && S.src === 'touch') { const u = V.U(x, y, 0); if (u[0] >= 0 && u[1] >= 0 && u[0] <= S.W && u[1] <= S.H) target = u; }
+    else if (mode === 'orbit' && st.moved <= 5) { const u = V.U(x, y, 0); if (u[0] >= 0 && u[1] >= 0 && u[0] <= S.W && u[1] <= S.H) { if (S.mode === 'live') logTap(u); else if (S.src === 'touch') target = u; } }
     ptrs.delete(e.pointerId); if (!ptrs.size) { mode = null; cv.classList.remove('drag'); } };
   cv.onwheel = e => { e.preventDefault(); S.view.zoom = Math.min(4, Math.max(0.5, S.view.zoom * (e.deltaY < 0 ? 1.1 : 0.9))); };
-  addEventListener('keydown', e => { if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return; keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = true; if (S.src !== 'touch' && /^(w|a|s|d|Arrow.*)$/.test(e.key) && !e.metaKey) setSource('touch'); if (e.key.startsWith('Arrow')) e.preventDefault(); });
+  addEventListener('keydown', e => { if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return; keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = true; if (S.mode === 'demo' && S.src !== 'touch' && /^(w|a|s|d|Arrow.*)$/.test(e.key) && !e.metaKey) setSource('touch'); if (e.key.startsWith('Arrow')) e.preventDefault(); });
   addEventListener('keyup', e => { keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = false; });
   const jy = $('joy'), jk = $('joyk'); let jd = false; const jm = e => { const r = jy.getBoundingClientRect(), dx = (e.clientX - r.left - 52) / 40, dy = (e.clientY - r.top - 52) / 40, L = Math.hypot(dx, dy), k = L > 1 ? 1 / L : 1; joy = { x: dx * k, y: dy * k }; jk.style.transform = `translate(${joy.x * 34}px,${joy.y * 34}px)`; };
   jy.onpointerdown = e => { jd = true; jy.setPointerCapture(e.pointerId); jm(e); }; jy.onpointermove = e => { if (jd) jm(e); }; jy.onpointerup = jy.onpointercancel = () => { jd = false; joy = { x: 0, y: 0 }; jk.style.transform = ''; };
   addEventListener('resize', resize);
 }
-function setSpace(sp) { S.space = sp; setSeg('spaces', 'sp', S.space); if (S.space === 'hospital') { $('i-scale').value = S.scale = 8; S.model = 'add'; $('i-model').value = 'add'; S.sigM = 0.8; sigUI(); S.pos = [3, 12]; } else { $('i-scale').value = S.scale = 1; S.model = 'rssi'; $('i-model').value = 'rssi'; sigUI(); S.pos = [S.W / 2, S.H / 2]; S.Z = +$('i-Z').value; S.W = +$('i-W').value; S.H = +$('i-H').value; } S.dead.clear(); S.obstruct.clear(); S.drift.clear(); demoI = 0; rebuild(false); spaceNote(); renderAnchors(); }
+function setSpace(sp) { S.space = sp; setSeg('spaces', 'sp', S.space); if (S.space === 'hospital') { S.scale = 8; S.model = 'add'; $('i-model').value = 'add'; S.sigM = 0.8; sigUI(); S.pos = [3, 12]; } else { S.scale = 1; S.model = 'rssi'; $('i-model').value = 'rssi'; sigUI(); S.Z = +$('i-Z').value; S.W = Math.max(2, +$('i-W').value || 5); S.H = Math.max(2, +$('i-H').value || 4); S.pos = [S.W / 2, S.H / 2]; S.all = null; } S.dead.clear(); S.obstruct.clear(); S.drift.clear(); demoI = 0; rebuild(false); spaceNote(); renderAnchors(); buildTable(); }
 function renderAnchorsDz() { document.querySelectorAll('#anchors .an').forEach(el => { const a = S.anchors[+el.dataset.i], dz = a.z - S.zDev, s = el.querySelector('.dz'); if (s) s.textContent = (dz >= 0 ? '↑ ' : '↓ ') + Math.abs(dz).toFixed(1) + ' m ' + (dz >= 0 ? 'above' : 'below') + ' phone'; }); }
 function sigUI() { const r = S.model === 'rssi', el = $('i-sig'); el.max = r ? 10 : 3; el.step = r ? 0.5 : 0.1; el.value = r ? S.sigDb : S.sigM; $('v-sig').textContent = el.value + (r ? ' dB' : ' m'); }
 function setSource(s) {
-  S.src = s; setSeg('srcs', 's', s); $('o-phone').style.display = s === 'phone' ? 'flex' : 'none'; $('o-gps').style.display = s === 'gps' ? 'flex' : 'none'; $('joy').classList.toggle('on', s === 'touch');
-  const names = { demo: 'Demo walker', touch: 'Tap / keys', phone: 'Phone motion', gps: 'GPS', remote: 'Phone live' }; $('p-src').lastElementChild.textContent = names[s]; $('p-src').className = 'pill' + (s === 'demo' ? '' : ' ok');
-  if (s === 'phone' && !sensOn) $('n-sens').textContent = 'Tap "Enable phone sensors" (needed once). Then hold the phone flat in front of you and walk.';
+  if (S.mode === 'live' && s !== 'remote') s = 'live'; S.src = s; setSeg('walk', 'w', s); $('joy').classList.toggle('on', s === 'touch'); srcPill();
+}
+function srcPill() {
+  const names = { demo: 'Demo · auto loop', touch: 'Demo · tap / keys', remote: 'Phone live', live: 'Receiver phone' }; $('p-src').lastElementChild.textContent = names[S.src] || S.src;
+  $('p-src').className = 'pill' + (S.src === 'demo' ? '' : S.src === 'live' ? (S.link ? ' ok' : ' warn') : ' ok');
+}
+/* receiver mode: one ground-truth sample per tap, like the LOCUS Beacon dashboard */
+function logTap(u) {
+  S.liveTruth = u; const c = cur; if (!c || !c.out) return; const err = Math.hypot(c.out.pos[0] - u[0], c.out.pos[1] - u[1]); stats.loc.push(err); if (c.ls) stats.ls.push(Math.hypot(c.ls[0] - u[0], c.ls[1] - u[1])); if (c.kf) stats.kf.push(Math.hypot(c.kf[0] - u[0], c.kf[1] - u[1]));
+  logRows.push([eng.t.toFixed(1), u[0].toFixed(3), u[1].toFixed(3), S.zDev, ...c.out.pos.map(v => v.toFixed(3)), c.p3 ? c.p3[2].toFixed(2) : '', c.ls ? c.ls[0].toFixed(3) : '', c.ls ? c.ls[1].toFixed(3) : '', err.toFixed(3), c.ls ? stats.ls[stats.ls.length - 1].toFixed(3) : '', c.kf ? stats.kf[stats.kf.length - 1].toFixed(3) : '', ...S.anchors.map((a, i) => c.meas[i] ? c.meas[i].rssi : ''), ...S.anchors.map((a, i) => c.out.trust[i].toFixed(2))]);
+  $('h-err').textContent = err.toFixed(2) + ' m';
 }
 function updateReport() {
   const c = cur; if (!c) return; const med = a => a.length ? [...a].sort((x, y) => x - y)[a.length >> 1] : null, q95 = a => a.length ? [...a].sort((x, y) => x - y)[Math.min(a.length - 1, Math.floor(a.length * .95))] : null, f = v => v == null ? '–' : v.toFixed(2) + ' m';
   $('k-m1').textContent = f(med(stats.loc)); $('k-m2').textContent = f(med(stats.ls)); $('k-m3').textContent = f(med(stats.kf)); $('k-p1').textContent = f(q95(stats.loc)); $('k-p2').textContent = f(q95(stats.ls)); $('k-n').textContent = stats.loc.length;
-  $('h-err').textContent = c.e.loc == null ? '–' : c.e.loc.toFixed(2) + ' m'; $('h-ls').textContent = c.e.ls == null ? 'no fix' : c.e.ls.toFixed(2) + ' m';
+  if (S.mode === 'demo') { $('h-err').textContent = c.e.loc == null ? '–' : c.e.loc.toFixed(2) + ' m'; $('h-ls').textContent = c.e.ls == null ? 'no fix' : c.e.ls.toFixed(2) + ' m'; } else if (!S.liveTruth) { $('h-err').textContent = 'tap floor'; $('h-ls').textContent = c.ls ? c.ls[0].toFixed(1) + ', ' + c.ls[1].toFixed(1) : 'no fix'; }
   $('h-z').textContent = (c.p3 ? c.p3[2].toFixed(1) + '±' + c.p3[3].toFixed(1) : '–') + ' · ' + S.zDev.toFixed(1) + ' m'; $('h-n').textContent = c.meas.filter(Boolean).length + ' / ' + S.anchors.length;
-  $('tb').innerHTML = S.anchors.map((a, i) => { const m = c.meas[i], t = c.out ? c.out.trust[i] : 0; return `<tr><td><b>${a.id}</b></td><td>${S.dead.has(a.id) ? 'off' : m ? m.rssi + ' dBm' : 'lost'}</td><td>${m ? m.r3.toFixed(1) + ' m' : '–'}</td><td><div class="tb"><i style="width:${Math.round(t * 100)}%;background:${trustCol(t)}"></i></div></td></tr>`; }).join('');
+  $('tb').innerHTML = S.anchors.map((a, i) => { const m = c.meas[i], t = c.out ? c.out.trust[i] : 0; return `<tr><td><b>${a.id}</b></td><td>${S.dead.has(a.id) && S.mode === 'demo' ? 'off' : m ? m.rssi + ' dBm' : 'lost'}</td><td>${m ? m.r3.toFixed(1) + ' m' : '–'}</td><td><div class="tb"><i style="width:${Math.round(t * 100)}%;background:${trustCol(t)}"></i></div></td></tr>`; }).join('');
   const bad = c.out && S.anchors.map((a, i) => ({ a, t: c.out.trust[i], r: c.out.reasons[i] })).filter(x => x.t < 0.7 && x.r).sort((a, b) => a.t - b.t)[0]; $('n-reason').innerHTML = bad ? '<b>' + bad.a.id + ':</b> ' + bad.r : 'All readings look consistent.';
-  const nh = c.meas.filter(Boolean).length; $('p-mode').className = 'pill ' + (nh >= 3 ? 'ok' : nh >= 1 ? 'warn' : 'bad'); $('p-mode').lastElementChild.textContent = 'Simulated radio · ' + nh + ' anchors heard';
-  if (S.src === 'phone') {
-    const now = performance.now(), live = lastMotion && now - lastMotion < 1500; if (diag.t0 && now - diag.t0 > 1000) { diag.rate = (diag.motion - diag.n0) / ((now - diag.t0) / 1000); diag.t0 = now; diag.n0 = diag.motion; }
-    let hint = !sensOn ? 'Tap "Enable phone sensors" first.' : !diag.motion ? 'No motion events yet. Use Chrome (Android) or Safari (iPhone) over https, allow Motion sensors for this site, and keep the screen on.' : !live ? 'Motion events stopped - keep the screen on and this tab in front.' : S.steps === 0 ? 'Sensor is live. Now walk with firm steps, phone held steady in front of you (or lower the sensitivity threshold below).' : '';
-    $('n-ph').innerHTML = 'Motion ' + (live ? '<b style="color:#0B8A5E">live</b>' : '<b style="color:#b13a3a">no data</b>') + ' · ' + diag.rate.toFixed(0) + ' Hz · |a| ' + sd.mag.toFixed(1) + ' · threshold ' + sd.thr.toFixed(2) + '<br>Compass ' + (S.heading == null ? '<b style="color:#b13a3a">no heading</b>' : '<b>' + S.heading.toFixed(0) + '°</b>') + ' (' + diag.ori + ' events) · steps <b>' + S.steps + '</b>' + (diag.lastStep ? ' · last ' + ((now - diag.lastStep) / 1000).toFixed(1) + ' s ago' : '') + (hint ? '<br><span style="color:#8a5a00">' + hint + '</span>' : '');
-  }
+  const nh = c.meas.filter(Boolean).length; $('p-mode').className = 'pill ' + (nh >= 3 ? 'ok' : nh >= 1 ? 'warn' : 'bad'); $('p-mode').lastElementChild.textContent = S.mode === 'live' ? (S.link ? 'Real BLE · ' + nh + ' beacons heard' : 'No link to receiver') : 'Simulated radio · ' + nh + ' anchors heard'; if (S.mode === 'live') { $('p-mode').className = 'pill ' + (S.link && nh >= 3 ? 'ok' : S.link ? 'warn' : 'bad'); srcPill(); }
+  updateBeacons();
   const sp = $('spark'), sg = sp.getContext('2d'), W = sp.clientWidth, Hh = sp.clientHeight; if (sp.width !== W * 2) { sp.width = W * 2; sp.height = Hh * 2; } sg.setTransform(2, 0, 0, 2, 0, 0); sg.clearRect(0, 0, W, Hh);
   const mx = Math.max(1, ...stats.loc.slice(-300), ...stats.ls.slice(-300)); [['ls', COL.ls], ['loc', COL.locus]].forEach(([k, col]) => { const a = stats[k].slice(-300); if (a.length < 2) return; sg.beginPath(); a.forEach((v, i) => { const x = i / 299 * W, y = Hh - 6 - v / mx * (Hh - 14); i ? sg.lineTo(x, y) : sg.moveTo(x, y); }); sg.strokeStyle = col; sg.lineWidth = 2; sg.stroke(); });
   sg.fillStyle = '#7A9AA6'; sg.font = '600 10px Figtree'; sg.fillText('error (m) · green LOCUS · amber trilateration · max ' + mx.toFixed(1), 6, 11);
@@ -918,54 +1033,55 @@ function updateReport() {
 const remote = { pos: null, h: null, t: 0 };
 function cfgSnapshot() {
   return {
-    space: S.space, W: S.W, H: S.H, Z: S.Z, n: S.n, zDev: S.zDev, zKnow: S.zKnow, zAssume: S.zAssume, partition: S.partition, model: S.model, sigDb: S.sigDb, sigM: S.sigM, loss: S.loss, rssi1m: S.rssi1m, pn: S.pn, scorer: S.scorer, scale: S.scale,
-    dead: [...S.dead].sort(), obstruct: [...S.obstruct].sort(), drift: [...S.drift].sort(), anchors: (S.all || []).map(a => [a.id, +a.x.toFixed(2), +a.y.toFixed(2), +a.z.toFixed(2)])
+    space: S.space, W: S.W, H: S.H, Z: S.Z, n: S.n, k: S.k, zDev: S.zDev, zKnow: S.zKnow, zAssume: S.zAssume, partition: S.partition, model: S.model, sigDb: S.sigDb, sigM: S.sigM, loss: S.loss, rssi1m: S.rssi1m, pn: S.pn, scorer: S.scorer, scale: S.scale,
+    dead: [...S.dead].sort(), obstruct: [...S.obstruct].sort(), drift: [...S.drift].sort(), anchors: (S.all || []).map(a => [a.id, +a.x.toFixed(2), +a.y.toFixed(2), +a.z.toFixed(2), a.on ? 1 : 0])
   };
 }
 function applyCfg(c) {
   const old = cfgSnapshot(), structural = ['space', 'W', 'H', 'Z', 'partition'].some(k => old[k] !== c[k]) || JSON.stringify(old.anchors) !== JSON.stringify(c.anchors) || old.n !== c.n;
-  ['space', 'W', 'H', 'Z', 'n', 'zDev', 'zKnow', 'zAssume', 'partition', 'model', 'sigDb', 'sigM', 'loss', 'rssi1m', 'pn', 'scale'].forEach(k => S[k] = c[k]);
+  ['space', 'W', 'H', 'Z', 'zDev', 'zKnow', 'zAssume', 'partition', 'model', 'sigDb', 'sigM', 'loss', 'rssi1m', 'pn', 'scale'].forEach(k => S[k] = c[k]);
   S.dead = new Set(c.dead); S.obstruct = new Set(c.obstruct); S.drift = new Set(c.drift);
   const scorerChanged = S.scorer !== c.scorer; S.scorer = c.scorer;
   if (structural) {
-    if (S.space === 'room') S.all = c.anchors.map(a => ({ id: a[0], x: a[1], y: a[2], z: a[3] }));
-    rebuild(S.space === 'room');
-    if (S.space === 'hospital') c.anchors.forEach((a, i) => { if (S.all[i]) S.all[i].z = a[3]; });
+    const p1 = (S.all || []).map(a => a.p1), on = (a, i) => a[4] == null ? i < c.n : !!a[4];   /* older peers send only a count */
+    if (S.space === 'room') S.all = c.anchors.map((a, i) => ({ id: a[0], b: i + 1, x: a[1], y: a[2], z: a[3], on: on(a, i), p1: p1[i] != null ? p1[i] : null }));
+    else if (S.all) S.all.forEach((a, i) => { if (c.anchors[i]) a.on = on(c.anchors[i], i); });
+    rebuild(true);
+    if (S.space === 'hospital') { c.anchors.forEach((a, i) => { if (S.all[i]) S.all[i].z = a[3]; }); activate(); newEngine(); }
   } else if (scorerChanged) newEngine();
   syncUIFromState();
 }
 function syncUIFromState() {
   const set = (id, v, lab, f) => { const e = $(id); if (e) e.value = v; if (lab && $(lab)) $(lab).textContent = f ? f(v) : v; };
-  set('i-W', S.W, 'v-W', v => (+v).toFixed(1)); set('i-H', S.H, 'v-H', v => (+v).toFixed(1)); set('i-Z', S.Z, 'v-Z', v => (+v).toFixed(1)); set('i-n', S.n, 'v-n'); set('i-zd', S.zDev, 'v-zd', v => (+v).toFixed(2) + ' m'); set('i-za', S.zAssume, 'v-za', v => (+v).toFixed(2) + ' m');
-  set('i-loss', Math.round(S.loss * 100), 'v-loss', v => v + '%'); $('i-model').value = S.model; sigUI(); $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-scale').value = S.scale;
+  set('i-Z', S.Z, 'v-Z', v => (+v).toFixed(1)); set('i-zd', S.zDev, 'v-zd', v => (+v).toFixed(2) + ' m'); set('i-za', S.zAssume, 'v-za', v => (+v).toFixed(2) + ' m');
+  set('i-loss', Math.round(S.loss * 100), 'v-loss', v => v + '%'); $('i-model').value = S.model; sigUI(); $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn;
   $('g-part').setAttribute('aria-pressed', S.partition); $('g-zknow').setAttribute('aria-pressed', S.zKnow); $('f-zas').style.display = S.zKnow ? 'none' : 'flex';
-  setSeg('spaces', 'sp', S.space); setSeg('scorer', 'sc', S.scorer); spaceNote(); renderAnchors(); syncFaults();
+  setSeg('spaces', 'sp', S.space); setSeg('scorer', 'sc', S.scorer); spaceNote(); renderAnchors(); syncFaults(); buildTable();
 }
 const Sync = (() => {
   let peer = null, conns = [], role = null, code = null, lastSent = '', lastRecv = '', posT = 0;
-  const say = m => { $('n-sync').textContent = m; };
+  const say = m => { const e = $('n-sync'); if (e) e.textContent = m; else if (window.console) console.log('[sync] ' + m); };
   const open = () => conns.filter(c => c.open);
   function ready() { if (typeof Peer === 'undefined') { say('Sync library could not load (offline?). Check your connection and reload.'); return false; } return true; }
   function wire(c) {
     c.on('open', () => {
-      conns.push(c); $('b-leave').disabled = false; pairState(true); say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + '). Pick Phone motion or Tap on the device that should move the dot.');
+      conns.push(c); pairState(true); say('Connected (' + open().length + ' device' + (open().length > 1 ? 's' : '') + ').');
       if (role === 'host') { c.send({ t: 'cfg', c: cfgSnapshot() }); lastSent = JSON.stringify(cfgSnapshot()); }
     });
     c.on('data', d => {
       if (d.t === 'cfg') { lastRecv = JSON.stringify(d.c); if (lastRecv !== JSON.stringify(cfgSnapshot())) applyCfg(d.c); lastSent = JSON.stringify(cfgSnapshot()); }
-      else if (d.t === 'patch') { const k = Object.assign({}, d.k || {}); if (k.space && k.space !== S.space) { setSpace(k.space); } delete k.space; const c2 = Object.assign(cfgSnapshot(), k); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
-      else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
+      else if (d.t === 'patch') { const k = Object.assign({}, d.k || {}); if (k.space && k.space !== S.space) { setSpace(k.space); } delete k.space; if (k.n != null && k.n !== S.n) { const n = Math.min(6, Math.max(1, k.n)); LAYOUT[n] && S.space === 'room' ? layout(n) : (S.all.forEach((a, i) => a.on = i < n), rebuild(true), buildTable()); } delete k.n; const c2 = Object.assign(cfgSnapshot(), k); if (c2.zKnow) c2.zAssume = c2.zDev; applyCfg(c2); }
+      else if (d.t === 'pos') { remote.pos = d.p; remote.h = d.h; remote.t = performance.now(); if (S.src === 'demo' && S.mode === 'demo') setSource('remote'); if (S.src === 'remote') { if (d.h != null) S.heading = d.h; if (d.st != null) S.steps = d.st; } }
     });
     c.on('close', () => { conns = conns.filter(x => x !== c); if (!open().length) { pairState(false); say(role === 'join' ? 'Host disconnected.' : 'Waiting for a device to join… code ' + code); if (S.src === 'remote') setSource('demo'); } });
     c.on('error', e => say('Link error: ' + (e.type || e.message || e)));
   }
   function pairCard(cd, url) { $('pair').style.display = 'block'; $('pc').textContent = cd; $('pu').textContent = url.replace(/^https?:\/\//, ''); try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('pq').innerHTML = q.createSvgTag({ cellSize: 3, margin: 1 }); } catch (e) { } pairState(false); }
   function pairState(on) { $('pair').classList.toggle('on', on); $('pt').textContent = on ? 'Phone connected — walk!' : 'Scan with your phone'; }
-  function qr(url) { try { const q = qrcode(0, 'M'); q.addData(url); q.make(); $('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 1 }); } catch (e) { $('qr').textContent = ''; } }
   function share() {
     if (!ready()) return; leave(); code = String(1000 + Math.floor(Math.random() * 9000)); role = 'host'; say('Starting…');
     peer = new Peer('locus-rl-' + code);
-    peer.on('open', () => { const url = location.href.split('#')[0].replace(/[^/]*$/, '') + 'phone.html#join=' + code; $('o-share').style.display = 'flex'; $('n-share').innerHTML = 'Code <b style="font-size:20px;letter-spacing:.15em">' + code + '</b> — scan the QR with your phone (opens the Phone page).'; $('i-url').value = url; qr(url); pairCard(code, url); $('b-leave').disabled = false; say('Waiting for a device to join… code ' + code); });
+    peer.on('open', () => { const url = location.href.split('#')[0].replace(/[^/]*$/, '') + 'phone.html#join=' + code; pairCard(code, url); say('Waiting for a device to join… code ' + code); });
     peer.on('connection', wire); peer.on('error', e => { say(e.type === 'unavailable-id' ? 'Code clash, press Share again.' : 'Sync error: ' + e.type); });
   }
   function join(cd) {
@@ -976,7 +1092,7 @@ const Sync = (() => {
   }
   function leave() {
     conns.forEach(c => { try { c.close(); } catch (e) { } }); conns = []; if (peer) { try { peer.destroy(); } catch (e) { } } peer = null; role = null;
-    $('b-leave').disabled = true; $('o-share').style.display = 'none'; say('Not connected.'); if (S.src === 'remote') setSource('demo');
+    say('Not connected.'); if (S.src === 'remote') setSource('demo');
   }
   /* called every tick (10 Hz) */
   let estT = 0;
@@ -999,14 +1115,14 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 function init() {
-  $('i-W').value = S.W; $('v-W').textContent = S.W.toFixed(1); $('i-H').value = S.H; $('v-H').textContent = S.H.toFixed(1); $('i-Z').value = S.Z; $('v-Z').textContent = S.Z.toFixed(1); $('i-n').value = S.n; $('v-n').textContent = S.n;
-  $('i-zd').value = S.zDev; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; S.zAssume = S.zDev; $('i-model').value = S.model; $('i-loss').value = S.loss * 100; $('v-loss').textContent = Math.round(S.loss * 100) + '%'; $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn; $('i-step').value = S.stepLen; $('i-scale').value = S.scale;
-  sigUI(); bindUI(); resize(); rebuild(false); spaceNote(); renderAnchors(); syncFaults(); syncView(); setSource('demo');
+  $('i-W').value = S.W; $('i-H').value = S.H; $('i-Z').value = S.Z; $('v-Z').textContent = S.Z.toFixed(1); $('i-host').value = S.host || '';
+  $('i-zd').value = S.zDev; $('v-zd').textContent = S.zDev.toFixed(2) + ' m'; S.zAssume = S.zDev; $('i-model').value = S.model; $('i-loss').value = S.loss * 100; $('v-loss').textContent = Math.round(S.loss * 100) + '%'; $('i-r1').value = S.rssi1m; $('i-pn').value = S.pn;
+  sigUI(); bindUI(); resize(); rebuild(false); buildTable(); spaceNote(); renderAnchors(); syncFaults(); syncView(); setSource('demo');
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { });
   if (!/join=/.test(location.hash)) setTimeout(() => Sync.share(), 700);
-  const jm = /join=(\d{4})/.exec(location.hash); if (jm) { document.querySelector('.tabs [data-t=track]').click(); $('i-code').value = jm[1]; setTimeout(() => Sync.join(jm[1]), 400); }
+  const jm = /join=(\d{4})/.exec(location.hash); if (jm) setTimeout(() => Sync.join(jm[1]), 400);
   requestAnimationFrame(loop);
-  window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, phoneStep, setSource, rebuild, onMotion, onOri };
+  window.__locus = { Sync, remote, S, tick, get cur() { return cur; }, get stats() { return stats; }, setSource, setMode, rebuild, layout, health, measureBeacon, calibrate, logTap, liveMeas };
 }
 init();
 

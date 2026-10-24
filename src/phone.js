@@ -8,7 +8,7 @@ let sensOn = false, lastMotion = 0, absSeen = false, wake = null;
 function partitions() { return P.partition && P.space === 'room' ? [[P.W / 2, 0, P.W / 2, P.H * 0.36], [P.W / 2, P.H * 0.64, P.W / 2, P.H]] : []; }
 function applyCfg(c) {
   const first = !P.gotCfg; P.gotCfg = true; P.cfg = c; renderControls();
-  P.space = c.space; P.W = c.W; P.H = c.H; P.Z = c.Z; P.partition = c.partition; P.anchors = c.anchors || [];
+  P.space = c.space; P.W = c.W; P.H = c.H; P.Z = c.Z; P.partition = c.partition; P.anchors = (c.anchors || []).filter((x, i) => x[4] == null ? i < (c.n || 6) : x[4]);
   if (c.scale != null && !P.scaleTouched) { P.scale = c.scale; $('i-scale').value = c.scale; }
   if (c.zDev != null) { P.zDev = c.zDev; document.querySelectorAll('#zpre button').forEach(b => b.classList.toggle('on', Math.abs(+b.dataset.z - P.zDev) < 0.03)); }
   if (P.space === 'hospital') { setSite('hospital'); P.W = FLOOR.w; P.H = FLOOR.h; } else setRoom(P.W, P.H, P.anchors.map(a => ({ id: a[0], x: a[1], y: a[2] })), partitions());
@@ -100,7 +100,7 @@ function renderControls() {
   const set = (id, v, lab, f) => { if (document.activeElement !== $(id)) $(id).value = v; $(lab).textContent = f ? f(v) : v; };
   set('r-W', c.W, 'v-rW', v => (+v).toFixed(1)); set('r-H', c.H, 'v-rH', v => (+v).toFixed(1)); set('r-n', c.n, 'v-rn');
   const rssi = c.model === 'rssi'; const sg = $('r-sig'); sg.max = rssi ? 10 : 3; sg.step = rssi ? 0.5 : 0.1; $('l-sig').textContent = rssi ? 'Noise (dB)' : 'Noise (m)'; set('r-sig', rssi ? c.sigDb : c.sigM, 'v-rsig'); set('r-loss', Math.round(c.loss * 100), 'v-rloss', v => v + '%');
-  $('rc-anch').innerHTML = (c.anchors || []).slice(0, c.n).map(a => { const id = a[0], st = c.dead.includes(id) ? 'k' : c.obstruct.includes(id) ? 'o' : c.drift.includes(id) ? 'd' : ''; return '<button class="ach ' + st + '" data-id="' + id + '">' + id + (st === 'k' ? ' off' : st === 'o' ? ' blocked' : st === 'd' ? ' drift' : '') + '</button>'; }).join('');
+  $('rc-anch').innerHTML = (c.anchors || []).filter((x, i) => x[4] == null ? i < c.n : x[4]).map(a => { const id = a[0], st = c.dead.includes(id) ? 'k' : c.obstruct.includes(id) ? 'o' : c.drift.includes(id) ? 'd' : ''; return '<button class="ach ' + st + '" data-id="' + id + '">' + id + (st === 'k' ? ' off' : st === 'o' ? ' blocked' : st === 'd' ? ' drift' : '') + '</button>'; }).join('');
   document.querySelectorAll('#rc-anch .ach').forEach(b => b.onclick = () => {
     const id = b.dataset.id, k = c.dead.includes(id) ? 'dead' : c.obstruct.includes(id) ? 'obstruct' : c.drift.includes(id) ? 'drift' : null, order = [null, 'dead', 'obstruct', 'drift'], nx = order[(order.indexOf(k) + 1) % 4];
     const patch = { dead: c.dead.filter(x => x !== id), obstruct: c.obstruct.filter(x => x !== id), drift: c.drift.filter(x => x !== id) }; if (nx) patch[nx] = patch[nx].concat(id); Link.send({ t: 'patch', k: patch });

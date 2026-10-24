@@ -39,7 +39,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(244,252,254,.86);backdro
 .pill.ok i{background:var(--em);box-shadow:0 0 0 3px rgba(16,185,129,.2)}.pill.warn i{background:var(--amber)}.pill.bad i{background:var(--coral)}
 a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .layout{display:grid;gap:14px;padding:14px 16px 28px;max-width:1500px;margin:0 auto;grid-template-columns:1fr}
-@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 410px;align-items:start}.stage{position:sticky;top:70px}}
+@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 440px;align-items:start}.stage{position:sticky;top:70px}}
 .stage{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
 #cv{display:block;width:100%;height:min(62vh,640px);min-height:340px;touch-action:none;cursor:grab;background:linear-gradient(180deg,#F7FDFF,#EAF8FC)}
 #cv.drag{cursor:grabbing}
@@ -58,7 +58,7 @@ a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .legend label input{display:none}
 @media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
 .pair{position:absolute;right:12px;bottom:70px;background:rgba(255,255,255,.96);border:1.5px solid var(--aqua-l);border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 8px 22px rgba(11,58,74,.12);width:150px;z-index:5}.pair .pt{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px}.pair svg{width:100%;height:auto;display:block}.pair .pc{font:700 22px Sora;letter-spacing:.2em;color:var(--ink)}.pair .pu{font-size:9.5px;color:var(--ink3);word-break:break-all;margin-top:2px}.pair.on{width:auto;padding:7px 12px;background:var(--em-l);border-color:var(--em)}.pair.on #pq,.pair.on .pc,.pair.on .pu{display:none}.pair.on .pt{color:var(--em-dd);margin:0}
-@media(max-width:700px){.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
+@media(max-width:700px){.hud{position:static;padding:10px 12px}.bt input[type=number]{width:42px}.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
 .joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
 .joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
@@ -103,12 +103,26 @@ td{padding:7px 4px;border-bottom:1px solid #EAF6FA;vertical-align:middle}
 #spark{width:100%;height:96px;display:block;border-radius:12px;background:#F7FDFF;border:1px solid var(--line)}
 code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
 .url{display:flex;gap:6px}.url input{flex:1;height:36px;border:1.5px solid var(--aqua-l);border-radius:10px;padding:0 10px;font-size:12.5px}
+.card{border:1.5px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.card h4{font:700 12px Sora;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.btn.opt[aria-pressed=true]{background:var(--em);border-color:var(--em);color:#fff}
+.lay{gap:6px}.lay button{height:32px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}.lay button.on{background:var(--em);border-color:var(--em);color:#fff}
+.tw{overflow-x:auto;margin:0 -4px}
+.bt th{text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;white-space:nowrap}.bt td{padding:5px 3px;white-space:nowrap}
+.bt input[type=number]{width:50px;height:28px;border:1.5px solid var(--aqua-l);border-radius:8px;padding:0 5px;font-size:12.5px;font-weight:600;background:#fff}
+.bt input[type=checkbox]{width:16px;height:16px;accent-color:var(--em)}
+.bt tr.off td:not(:nth-child(2)){opacity:.45}
+.bt .cal{height:26px;padding:0 9px;border-radius:99px;border:1.5px solid var(--aqua-l);font-size:12px;font-weight:700;background:#fff}.bt .cal.set{border-color:var(--em);color:var(--em-dd)}
+.hd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ink3);margin-left:5px;vertical-align:middle}.hd.ok{background:var(--em)}.hd.warn{background:var(--amber)}.hd.bad{background:var(--coral)}
+.warnbox{border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
+.gcal{border:1.5px dashed var(--aqua);border-radius:12px;padding:10px;display:none;flex-direction:column;gap:6px}.gcal .prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.gcal .prog i{display:block;height:100%;width:0;background:var(--grad)}
+.lnk{color:var(--aqua-d);font-weight:700;text-decoration:underline;padding:0}
 </style>
 </head>
 <body>
 <header><div class="hrow">
   <div class="logo"><svg width="26" height="26" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22C3E6"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs><path d="M16 2c-5.5 0-10 4.4-10 9.8C6 19 16 30 16 30s10-11 10-18.2C26 6.4 21.500 2 16 2z" fill="url(#lg)"/><circle cx="16" cy="12" r="4" fill="#fff"/></svg>LOCUS <small>Room Live</small></div>
-  <div class="hl"><span class="pill" id="p-src"><i></i><span>Demo walker</span></span><span class="pill" id="p-mode"><i></i><span>Simulated radio</span></span>
+  <div class="hl"><span class="pill" id="p-src"><i></i><span>Demo · auto loop</span></span><span class="pill" id="p-mode"><i></i><span>Simulated radio</span></span>
     <a class="pill" href="LOCUS-Dashboard.html">Dashboard</a><a class="pill" href="LOCUS-Staff-App.html">Staff app</a></div>
 </div></header>
 
@@ -138,36 +152,31 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
   </section>
 
   <aside class="panel">
-    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="track">Track</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="beacons">Beacons</button><button role="tab" aria-selected="false" data-t="space">Space</button><button role="tab" aria-selected="false" data-t="radio">Radio</button><button role="tab" aria-selected="false" data-t="report">Report</button></div>
 
-    <div class="pane on" id="t-track">
-      <h3>How is the dot moved?</h3>
-      <div class="src" id="srcs">
-        <button data-s="demo" aria-pressed="true"><b>Demo walker</b><span>Auto-walks a loop. No sensors needed.</span></button>
-        <button data-s="touch" aria-pressed="false"><b>Tap / keys</b><span>Tap the floor to walk there. WASD / arrows / joystick.</span></button>
-        <button data-s="phone" aria-pressed="false"><b>Phone motion</b><span>Walk with your phone: steps + compass move the dot.</span></button>
-        <button data-s="gps" aria-pressed="false"><b>GPS</b><span>Big rooms / outdoors. Weak indoors.</span></button>
+    <div class="pane on" id="t-beacons">
+      <div class="card">
+        <h4>Source</h4>
+        <div class="row"><button class="btn sm opt" id="b-demo" aria-pressed="true">Demo (simulated receiver)</button><button class="btn sm opt" id="b-live" aria-pressed="false">Receiver phone</button></div>
+        <div id="o-demo" class="row"><span class="note">Walker</span><div class="seg" id="walk"><button data-w="demo" aria-pressed="true">Auto loop</button><button data-w="touch" aria-pressed="false">Tap / keys</button></div></div>
+        <div id="o-live" style="display:none;flex-direction:column;gap:8px">
+          <div class="url"><input id="i-host" placeholder="phone IP e.g. 192.168.43.1:8080" autocomplete="off" spellcheck="false"><button class="btn pri sm" id="b-conn">Connect</button></div>
+          <div class="note" id="n-live">Open the <b>LOCUS Beacon</b> app on the receiver phone, tap Receiver. It shows the address. This page works with no internet: the phone serves it.</div>
+          <div class="note warn" id="n-https" style="display:none">This page is on <b>https</b>, and browsers block plain-http requests to a phone. <button class="lnk" id="b-offline">Download this page</button>, open the file on the laptop (works offline), then connect.</div>
+          <div class="note">No ground truth with real radio: <b>tap the floor where you really stand</b> to log an error sample.</div>
+        </div>
       </div>
-      <div id="o-phone" hidden style="display:none;flex-direction:column;gap:12px">
-        <div class="row"><button class="btn pri" id="b-sens">Enable phone sensors</button><button class="btn sm" id="b-align">Face the top wall → Align</button><button class="btn sm" id="b-step">+1 step</button><button class="btn sm" id="b-hold" style="touch-action:none">Hold to walk</button></div>
-        <div class="note" id="n-sens">Hold the phone flat in front of you (screen up) or upright, then walk. Press <b>Align</b> while facing the <b>top wall</b> of the map so compass heading matches the room.</div>
-        <div class="row"><label class="fld">Your height (cm)<input type="number" id="i-hgt" value="170" min="120" max="220"></label><label class="fld">Step length (m)<input type="number" id="i-step" step="0.01" value="0.70" min="0.3" max="1.2"></label><label class="fld">Walk scale ×<input type="number" id="i-scale" step="0.5" value="1" min="0.5" max="20"></label></div>
-        <label class="fld">Step sensitivity <span class="v" id="v-sens">×1.0</span><input type="range" id="i-sens" min="0.4" max="3" step="0.1" value="1"></label>
-        <label class="fld">Heading fine-tune <span class="v" id="v-off">0°</span><input type="range" id="i-off" min="-180" max="180" value="0"></label>
-        <div class="note" id="n-ph">Steps 0 · heading –</div>
+      <div class="card">
+        <h4>Room and beacons</h4>
+        <div class="row"><label class="fld">Width m<input type="number" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth m<input type="number" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
+        <div class="row lay" id="lays"><button data-lay="2">2 · pair</button><button data-lay="3">3 · triangle</button><button data-lay="4">4 · square</button><button data-lay="6">6 · ring</button></div>
+        <div id="warn" class="warnbox ok" style="display:none"></div>
+        <div class="tw"><table class="bt"><thead><tr><th>#</th><th>On</th><th>x</th><th>y</th><th>RSSI</th><th>Range</th><th>Trust</th><th>1 m</th></tr></thead><tbody id="bt"></tbody></table></div>
+        <div class="row"><button class="btn pri sm" id="b-gcal">Guided calibration</button><span class="note" id="n-cal">Walks you through each beacon, one at a time.</span></div>
+        <div class="gcal" id="gcal"><b id="g-title"></b><div class="note" id="g-text"></div><div class="prog"><i id="g-bar"></i></div><div class="row"><button class="btn pri sm" id="g-go">Measure (3 s)</button><button class="btn sm" id="g-skip">Skip</button><button class="btn sm" id="g-stop">Stop</button></div></div>
+        <div class="note" id="n-why">Beacon # is the ID you pick in the app on each beacon phone. Untick one to test losing a beacon.</div>
       </div>
-      <div id="o-gps" style="display:none;flex-direction:column;gap:10px">
-        <div class="row"><button class="btn pri" id="b-gps">Start GPS</button><button class="btn sm" id="b-gps0">Set origin here</button></div>
-        <div class="note warn">GPS is metres-accurate at best and usually fails indoors. Use it outdoors or in a hall; otherwise use Phone motion.</div>
-        <div class="note" id="n-gps">GPS off.</div>
-      </div>
-      <div class="row"><button class="btn sm" id="b-reset">Reset trail</button><button class="btn sm" id="b-trail">Trail: on</button></div>
-      <h3>Sync phone ↔ laptop</h3>
-      <div class="note">Phone page: <b>phone.html</b> (scan the QR in the corner of the view). Walk with the phone, watch the big 3D view here. Direct device-to-device link; settings sync both ways, each device keeps its own camera angle.</div>
-      <div class="row"><button class="btn pri sm" id="b-share">Share this session</button><label class="fld" style="max-width:120px;min-width:100px"><input id="i-code" placeholder="code" inputmode="numeric" maxlength="4"></label><button class="btn sm" id="b-join">Join</button><button class="btn sm" id="b-leave" disabled>Leave</button></div>
-      <div id="o-share" style="display:none;flex-direction:column;gap:8px;align-items:flex-start"><div class="note" id="n-share"></div><div id="qr" style="background:#fff;padding:6px;border:1px solid var(--line);border-radius:12px"></div><div class="url" style="width:100%"><input id="i-url" readonly><button class="btn sm" id="b-copy">Copy</button></div></div>
-      <div class="note" id="n-sync">Not connected.</div>
-      <div class="note">Phone sensors need HTTPS (this GitHub Pages link is). Same Wi-Fi is the most reliable; across different networks the link may fail (no relay server).</div>
+      <div class="row"><button class="btn sm" id="b-trail">Trail: on</button><button class="btn sm" id="b-reset">Clear trail</button><span class="note" id="n-path">Path: 0.0 m</span></div>
     </div>
 
     <div class="pane" id="t-space">
@@ -175,18 +184,16 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <div class="seg" id="spaces" style="align-self:flex-start"><button data-sp="room" aria-pressed="true">My room</button><button data-sp="hospital" aria-pressed="false">Hospital (trained map)</button></div>
       <div class="note" id="n-space"></div>
       <div id="o-room" style="display:flex;flex-direction:column;gap:12px">
-        <div class="row"><label class="fld">Width (m) <span class="v" id="v-W">5.0</span><input type="range" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth (m) <span class="v" id="v-H">4.0</span><input type="range" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
         <label class="fld">Ceiling height (m) <span class="v" id="v-Z">2.7</span><input type="range" id="i-Z" min="2" max="8" step="0.1" value="2.7"></label>
         <div class="sw">Partition wall with door (NLOS test)<button class="tg" id="g-part" aria-pressed="false" aria-label="Partition"></button></div>
       </div>
-      <label class="fld">Anchors <span class="v" id="v-n">5</span><input type="range" id="i-n" min="2" max="6" step="1" value="5"></label>
       <h3>Phone height</h3>
       <label class="fld">Held at <span class="v" id="v-zd">1.30 m</span><input type="range" id="i-zd" min="0" max="2.6" step="0.05" value="1.3"></label>
       <div class="row"><div class="seg" id="zpre"><button data-z="0.05">Floor</button><button data-z="0.9">Pocket</button><button data-z="1.3">Hand</button><button data-z="2.0">Overhead</button></div></div>
       <div class="sw">System knows the height<button class="tg" id="g-zknow" aria-pressed="true" aria-label="Height known"></button></div>
       <label class="fld" id="f-zas" style="display:none">Height the system assumes <span class="v" id="v-za">1.30 m</span><input type="range" id="i-za" min="0" max="2.6" step="0.05" value="1.3"></label>
       <div class="note">The engine solves position on the floor plane, so it converts every 3D range to a horizontal one using the height difference. If the assumed height is wrong the error grows — turn <b>System knows the height</b> off to see it. With ≥4 anchors at different heights LOCUS also <b>estimates your height</b> (shown top-left of the view).</div>
-      <h3>Anchors <span class="note">(tap to select · drag in Top/Angled view to move)</span></h3>
+      <h3>Anchor heights <span class="note">(active beacons · tap to select · drag in Top/Angled view to move)</span></h3>
       <div id="anchors" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
@@ -200,7 +207,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <div class="seg" id="scorer" style="align-self:flex-start"><button data-sc="heuristic" aria-pressed="true">Heuristic</button><button data-sc="ml" aria-pressed="false">ML (LightGBM)</button></div>
       <div class="note" id="n-ml"></div>
       <h3>Inject faults</h3>
-      <div class="note">Select an anchor in the Space tab or tap one in the view, then:</div>
+      <div class="note">Tap an anchor in the view (or select it in the Space tab), then:</div>
       <div class="faults" id="faults"><button class="k" data-f="dead" aria-pressed="false">Kill anchor</button><button class="o" data-f="obstruct" aria-pressed="false">Block with body</button><button class="d" data-f="drift" aria-pressed="false">Drift / bias</button><button data-f="clear" aria-pressed="false">Clear all</button></div>
     </div>
 
@@ -211,7 +218,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
       <table><thead><tr><th>Anchor</th><th>RSSI</th><th>Range</th><th>Trust</th></tr></thead><tbody id="tb"></tbody></table>
       <div class="note" id="n-reason"></div>
       <div class="row"><button class="btn pri sm" id="b-csv">Download session CSV</button><button class="btn sm" id="b-clear">Clear stats</button></div>
-      <div class="note warn"><b>What is real and what is not.</b> The motion of the dot is real (your phone's step counter and compass). The radio signal is <b>synthetic</b>: LOCUS computes the RSSI the anchors <i>would</i> hear from the phone's true position, adds noise, and the engine localises from that. "Truth" is dead-reckoned from the phone, so it drifts over minutes; use short walks, press Align often. Real BLE hardware is the Staff app's Live BLE tab.</div>
+      <div class="note warn"><b>What is real and what is not.</b> In <b>Demo</b> the radio is <b>synthetic</b>: LOCUS computes the RSSI each anchor <i>would</i> hear from the walker (or your synced phone's dead-reckoned position), adds noise, and the engine localises from that. In <b>Receiver phone</b> mode the RSSI is <b>real Bluetooth</b> from the LOCUS Beacon app; there is no ground truth, so tap the floor where you really stand to log error samples.</div>
     </div>
   </aside>
 </div>
