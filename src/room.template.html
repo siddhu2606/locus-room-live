@@ -58,7 +58,7 @@ a.pill:hover{border-color:var(--em);color:var(--em-dd)}
 .legend label input{display:none}
 @media(max-width:700px){.legend{position:static;flex-direction:row;flex-wrap:wrap;gap:6px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:#fff;padding:9px 14px}.vbar{max-width:calc(100% - 24px)}#cv{height:min(58vh,520px)}.cap{display:none}}
 .pair{position:absolute;right:12px;bottom:70px;background:rgba(255,255,255,.96);border:1.5px solid var(--aqua-l);border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 8px 22px rgba(11,58,74,.12);width:150px;z-index:5}.pair .pt{font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:4px}.pair svg{width:100%;height:auto;display:block}.pair .pc{font:700 22px Sora;letter-spacing:.2em;color:var(--ink)}.pair .pu{font-size:9.5px;color:var(--ink3);word-break:break-all;margin-top:2px}.pair.on{width:auto;padding:7px 12px;background:var(--em-l);border-color:var(--em)}.pair.on #pq,.pair.on .pc,.pair.on .pu{display:none}.pair.on .pt{color:var(--em-dd);margin:0}
-@media(max-width:700px){.hud{position:static;padding:10px 12px}.bt input[type=number]{width:42px}.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
+@media(max-width:700px){.hud{position:static;padding:10px 12px}.bt input[type=number]{width:42px}.bt th:nth-child(3),.bt th:nth-child(4){width:48px}.pair{position:static;width:auto;border-radius:0;border-width:1px 0 0;display:flex;align-items:center;gap:12px;text-align:left}.pair svg{width:84px}.pair.on{padding:9px 14px}}
 .joy{position:absolute;right:14px;bottom:62px;width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.7);border:1.5px solid var(--aqua-l);touch-action:none;display:none}
 .joy.on{display:block}.joy b{position:absolute;left:34px;top:34px;width:36px;height:36px;border-radius:50%;background:var(--grad);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 .panel{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
@@ -114,7 +114,10 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
 .bt tr.off td:not(:nth-child(2)){opacity:.45}
 .bt .cal{height:26px;padding:0 9px;border-radius:99px;border:1.5px solid var(--aqua-l);font-size:12px;font-weight:700;background:#fff}.bt .cal.set{border-color:var(--em);color:var(--em-dd)}
 .hd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ink3);margin-left:5px;vertical-align:middle}.hd.ok{background:var(--em)}.hd.warn{background:var(--amber)}.hd.bad{background:var(--coral)}
-.warnbox{border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
+.warnbox{border-radius:12px;padding:8px 10px;font-size:12.5px;line-height:1.5;height:84px;overflow-y:auto;transition:background .3s,color .3s}
+#n-why{min-height:3em;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bt{table-layout:fixed;font-variant-numeric:tabular-nums}.bt th:nth-child(1){width:34px}.bt th:nth-child(2){width:34px}.bt th:nth-child(3),.bt th:nth-child(4){width:58px}.bt th:nth-child(5){width:64px}.bt th:nth-child(6){width:50px}.bt th:nth-child(8){width:66px}.bt td{overflow:hidden;text-overflow:ellipsis}
+.bt .cal{min-width:58px}.warnbox.ok{background:var(--em-l);color:var(--em-dd)}.warnbox.warn{background:var(--amber-l);color:#7a5200}.warnbox.bad{background:var(--coral-l);color:#a03434}
 .gcal{border:1.5px dashed var(--aqua);border-radius:12px;padding:10px;display:none;flex-direction:column;gap:6px}.gcal .prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.gcal .prog i{display:block;height:100%;width:0;background:var(--grad)}
 .lnk{color:var(--aqua-d);font-weight:700;text-decoration:underline;padding:0}
 </style>
@@ -170,7 +173,7 @@ code{background:var(--aqua-xl);padding:1px 6px;border-radius:6px;font-size:12px}
         <h4>Room and beacons</h4>
         <div class="row"><label class="fld">Width m<input type="number" id="i-W" min="2" max="40" step="0.5" value="5"></label><label class="fld">Depth m<input type="number" id="i-H" min="2" max="24" step="0.5" value="4"></label></div>
         <div class="row lay" id="lays"><button data-lay="2">2 · pair</button><button data-lay="3">3 · triangle</button><button data-lay="4">4 · square</button><button data-lay="6">6 · ring</button></div>
-        <div id="warn" class="warnbox ok" style="display:none"></div>
+        <div id="warn" class="warnbox ok" aria-live="polite">Starting…</div>
         <div class="tw"><table class="bt"><thead><tr><th>#</th><th>On</th><th>x</th><th>y</th><th>RSSI</th><th>Range</th><th>Trust</th><th>1 m</th></tr></thead><tbody id="bt"></tbody></table></div>
         <div class="row"><button class="btn pri sm" id="b-gcal">Guided calibration</button><span class="note" id="n-cal">Walks you through each beacon, one at a time.</span></div>
         <div class="gcal" id="gcal"><b id="g-title"></b><div class="note" id="g-text"></div><div class="prog"><i id="g-bar"></i></div><div class="row"><button class="btn pri sm" id="g-go">Measure (3 s)</button><button class="btn sm" id="g-skip">Skip</button><button class="btn sm" id="g-stop">Stop</button></div></div>

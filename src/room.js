@@ -200,6 +200,7 @@ function health() {
   } else if (S.n === 2) geo.push('2 beacons give two mirror-image answers. Use 3 (triangle) or more for a 2-D fix.');
   return { res, geo };
 }
+const MSG = {}; let WHY = null;
 function updateBeacons() {
   const c = cur, rows = document.querySelectorAll('#bt tr'); if (!c) return;
   S.all.forEach((a, i) => {
@@ -213,12 +214,17 @@ function updateBeacons() {
   if (S.mode === 'live' && !S.link) { wb.style.display = 'block'; wb.className = 'warnbox warn'; wb.textContent = poll ? 'Waiting for the receiver phone…' : 'Not connected: enter the receiver address above and press Connect.'; $('n-path').textContent = 'Path: ' + S.path.toFixed(1) + ' m'; return; }
   const H = health();
   H.res.forEach(h => { const d = rows[S.all.indexOf(h.a)] && rows[S.all.indexOf(h.a)].querySelector('.hd'); if (d) { d.className = 'hd ' + h.lv; d.title = h.msg || 'OK, ' + h.rate.toFixed(0) + ' packets/s'; } });
-  const msgs = H.res.filter(h => h.msg).map(h => ({ lv: h.lv, t: h.msg })).concat(H.geo.map(t => ({ lv: 'warn', t })));
-  if (!msgs.length) { wb.style.display = S.mode === 'demo' || S.link ? 'block' : 'none'; wb.className = 'warnbox ok'; wb.textContent = 'All active beacons healthy.'; }
-  else { wb.style.display = 'block'; wb.className = 'warnbox ' + (msgs.some(m => m.lv === 'bad') ? 'bad' : 'warn'); wb.innerHTML = msgs.map(m => '• ' + m.t.replace(/[<>&]/g, '')).join('<br>'); }
+  /* sticky messages: a warning shows only after it persists 1.5 s (silent beacons at once) and stays 4 s after it clears, so the box doesn't flicker on noise */
+  const now = performance.now(), live = H.res.filter(h => h.msg).map(h => ({ k: 'b' + h.a.b, lv: h.lv, t: h.msg })).concat(H.geo.map((t, i) => ({ k: 'g' + t.slice(0, 12), lv: 'warn', t })));
+  live.forEach(m => { const o = MSG[m.k]; MSG[m.k] = { lv: m.lv, t: m.t, since: o && o.lv === m.lv && now - o.last < 4000 ? o.since : now, last: now }; });
+  const msgs = Object.keys(MSG).filter(k => { const m = MSG[k]; if (now - m.last > 4000 || (k[0] === 'b' && !S.anchors.some(a => 'b' + a.b === k))) { delete MSG[k]; return false; } return m.lv === 'bad' || now - m.since > 1500; }).sort().map(k => MSG[k]);
+  wb.style.display = 'block';
+  if (!msgs.length) { wb.className = 'warnbox ok'; wb.textContent = 'All active beacons healthy.'; }
+  else { wb.className = 'warnbox ' + (msgs.some(m => m.lv === 'bad') ? 'bad' : 'warn'); wb.innerHTML = msgs.map(m => '• ' + m.t.replace(/[<>&]/g, '')).join('<br>'); }
   const o = c.out; if (o) {
     const worst = S.anchors.map((a, j) => ({ a, t: o.trust[j], r: o.reasons[j] })).sort((p, q) => p.t - q.t)[0];
-    $('n-why').textContent = worst && worst.t < 0.6 ? 'Beacon ' + worst.a.b + ' down-weighted: ' + (worst.r || 'low trust') : 'Beacon # is the ID you pick in the app on each beacon phone. Untick one to test losing a beacon.';
+    if (worst && worst.t < 0.6) WHY = { t: 'Beacon ' + worst.a.b + ' down-weighted: ' + (worst.r || 'low trust'), last: now };
+    $('n-why').textContent = WHY && now - WHY.last < 4000 ? WHY.t : 'Beacon # is the ID you pick in the app on each beacon phone. Untick one to test losing a beacon.';
   }
   $('n-path').textContent = 'Path: ' + S.path.toFixed(1) + ' m';
 }
